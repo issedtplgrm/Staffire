@@ -1,0 +1,46 @@
+ *{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+ }
+
+ .card{
+    width: 100%;
+    max-width: 380px;
+    background: floralwhite;
+    border: 1px solid #d8d9de;
+    border-radius: 16px;
+    padding: 32px 28px;
+ }
+
+ .field-group{
+    position: relative;
+    margin-bottom: 24px;
+ }
+
+ .field-group input{
+    width: 100%;
+    padding: 14px 12px;
+    font-size: 15px;
+    color: #1f2023;
+    background: transparent;
+ }
+
+ .field-group label{
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 0 4px;
+    font-size: 15px;
+    color: #8a8b93;
+    background: floralwhite;
+    pointer-events: none;
+    transition: top 0.15s ease, transform 0.15s ease;
+ }
+
+ .field-group input:focus+label, 
+ .field-group input:not(:placeholder-shown){
+    top: 0;
+    transform: translateY(-50%) scale(0.85);
+ }
