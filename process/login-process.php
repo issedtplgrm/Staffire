@@ -2,7 +2,7 @@
 
 session_start();
 
-include '../config/db.php';
+include '../Staffire/config/db.php';
 
 $login = trim($_POST["email"] ?? "");
 $password = trim($_POST["password"] ?? "");

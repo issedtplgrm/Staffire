@@ -41,7 +41,7 @@
             </div>
         </section>
 
-        <form class="right-panel" action="">
+        <form class="right-panel" action="../process/login-process.php" method="POST">
             <h1>Welcome to <span>Staffire!</span></h1>
             <h2>Sign in to continue</h2>
             <div class="field-group">
