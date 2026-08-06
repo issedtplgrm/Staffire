@@ -45,16 +45,18 @@
             <h1>Welcome to <span>Staffire!</span></h1>
             <h2>Sign in to continue</h2>
             <div class="field-group">
-                <input type="text" id="email" placeholder=" " required>
+                <input type="text" id="email" placeholder=" " name="email" required>
                 <label for="email">Email</label>
             </div>
 
             <div class="field-group">
-                <input type="password" id="password" placeholder=" " required>
+                <input type="password" id="password" placeholder=" " name="password" required>
                 <label for="password">Password</label>
             </div>
 
-            <button class="login-btn">Sign In</button>
+            <button type="submit" class="login-btn">
+                Sign In
+            </button>
             <h3>Don't have an acccount yet? <span>Contact your administrator</span></h3>
         </form>
     </main>
