@@ -17,31 +17,16 @@
     <div class="grid" id="grid"></div>
     <main class="login-wrapper">
         <section class="left-panel">
-            <div class="recent-header">
-                <img src="../assets/img/recent.png" class="recent-icon" alt="">
-                <h2>Recent Time-ins</h2>
-            </div>
-
-            <div class="time-card">
-
-                <div class="employee-name">
-                    Iced Pilgrim
+            <div>
+                <div>
+                    <h2>Recent Time ins</h2>
                 </div>
-
-                <div class="time-column">
-                    <span class="column-title">Time-in</span>
-                    <span class="column-value">00:00:00</span>
+                <div>
+                    <p>Iced Pilgrim</p>
                 </div>
-
-                <div class="time-column">
-                    <span class="column-title">Status</span>
-                    <span class="status">Present</span>
-                </div>
-
             </div>
         </section>
-
-        <form class="right-panel" action="">
+        <form class="right-panel" action="" >
             <h1>Welcome to <span>Staffire!</span></h1>
             <h2>Sign in to continue</h2>
             <div class="field-group">
