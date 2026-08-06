@@ -15,8 +15,18 @@
 <body>
 
     <div class="grid" id="grid"></div>
-    <main class="card">
-        <form action="">
+    <main class="login-wrapper">
+        <section class="left-panel">
+            <div>
+                <div>
+                    <h2>Recent Time ins</h2>
+                </div>
+                <div>
+                    <p>Iced Pilgrim</p>
+                </div>
+            </div>
+        </section>
+        <form class="right-panel" action="" >
             <h1>Welcome to <span>Staffire!</span></h1>
             <h2>Sign in to continue</h2>
             <div class="field-group">
@@ -28,6 +38,9 @@
                 <input type="password" id="password" placeholder=" " required>
                 <label for="password">Password</label>
             </div>
+
+            <button class="login-btn">Sign In</button>
+            <h3>Don't have an acccount yet? <span>Contact your administrator</span></h3>
         </form>
     </main>
 
