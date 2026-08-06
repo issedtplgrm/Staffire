@@ -73,11 +73,9 @@ body {
 
 .login-wrapper h1 {
   margin-bottom: 8px;
-
-  font-size: 28px;
+  font-size: clamp(1.75rem, 2vw, 2.25rem);
   font-weight: 700;
   line-height: 1.2;
-
   color: #f5f5f5;
 }
 
@@ -87,10 +85,8 @@ body {
 
 .login-wrapper h2 {
   margin-bottom: 42px;
-
-  font-size: 16px;
+  font-size: clamp(.9rem, 1vw, 1rem);
   font-weight: 400;
-
   color: #8a8b93;
 }
 
@@ -109,6 +105,7 @@ body {
     #181d4b 60%,
     #11152f 100%
   );
+
 }
 
 .right-panel {
@@ -129,7 +126,7 @@ body {
 
 .left-panel,
 .right-panel {
-  padding: 40px;
+  padding: clamp(20px, 4vw, 40px);
 }
 
 .field-group {
@@ -142,7 +139,7 @@ body {
   width: 100%;
   height: 54px;
   padding: 14px 12px;
-  font-size: 15px;
+  font-size: clamp(.9rem,.95vw,1rem);
   color: #f4f4f4;
   background: rgba(255, 255, 255, 0.02);
   border-radius: 14px;
@@ -170,7 +167,7 @@ body {
   top: 50%;
   transform: translateY(-50%);
   padding: 0 4px;
-  font-size: 15px;
+  font-size: clamp(.85rem,.95vw,.95rem);
   color: #8a8b93;
   pointer-events: none;
   transition:
@@ -197,7 +194,7 @@ body {
     background:transparent;
     color:#c80e55;
 
-    font-size:15px;
+    font-size: clamp(.9rem,.95vw,1rem);
     font-weight:600;
     text-decoration:none;
 
@@ -223,7 +220,7 @@ body {
 .right-panel h3{
    margin-bottom: 42px;
 
-  font-size: 14px;
+  font-size: clamp(.85rem,.9vw,.95rem);
   font-weight: 400;
 
   color: #8a8b93;
@@ -235,3 +232,72 @@ body {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+
+.recent-header{
+   display: flex;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 20px;
+}
+
+.recent-header h2{
+   padding-top: 40px ;
+    align-items: center;
+    font-size: clamp(1.2rem,1.5vw,1.5rem);
+    font-weight:600;
+    line-height: 1;
+    color:#ffffff;
+    
+}
+
+.recent-icon{
+   width: 40px;
+   height: clamp(30px,3vw,40px);
+   flex-shrink: 0;
+   display: block;
+}
+
+.time-card{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    width: 100%;
+    align-items: center;
+    padding:18px 20px;  
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.05);
+    border-radius:16px;
+    margin-bottom:16px;
+}
+
+.employee-name{
+    color:white;
+    font-size: clamp(.9rem,1vw,1rem);
+    font-weight:600;
+}
+
+.time-column{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+}
+
+.column-title{
+    margin-bottom:4px;
+    color:#8d94c8;
+    font-size:clamp(9px,.7vw,10px);
+    text-transform:uppercase;
+    letter-spacing:.8px;
+}
+
+.column-value{
+    color:#ffffff;
+    font-size: clamp(.8rem,.95vw,.95rem);
+    font-weight:500;
+}
+
+.status{
+   color:#16ae5f;
+   font-size:clamp(12px,.9vw,14px);
+   font-weight:500;
+}
+
