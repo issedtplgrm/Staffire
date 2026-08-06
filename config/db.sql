@@ -54,4 +54,4 @@ CREATE TABLE IF NOT EXISTS leave_requests (
     FOREIGN KEY (manager_id) REFERENCES users(id)
 );
 
-insert into employee (username, password, full_name, email, role) values("admin", "123admin", "admin_name", "admin@clsu.edu.ph", "admin")
+insert into users (username, password, full_name, email, role) values("admin", "123admin", "admin_name", "admin@clsu.edu.ph", "admin")
