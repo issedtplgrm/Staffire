@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+
     <link rel="stylesheet" href="../assets/css/login.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,36 +16,53 @@
 <body>
 
     <div class="grid" id="grid"></div>
+
     <main class="login-wrapper">
+
         <section class="left-panel">
             <div>
                 <div>
-                    <h2>Recent Time ins</h2>
+                    <h2>Recent Time Ins</h2>
                 </div>
+
                 <div>
                     <p>Iced Pilgrim</p>
                 </div>
             </div>
         </section>
-        <form class="right-panel" action="" >
+
+        <form class="right-panel" action="../process/login-process.php" method="POST">
+
             <h1>Welcome to <span>Staffire!</span></h1>
             <h2>Sign in to continue</h2>
+
             <div class="field-group">
-                <input type="text" id="email" placeholder=" " required>
+                <input
+                    type="email"id="email"name="email"placeholder=" "required>
                 <label for="email">Email</label>
             </div>
 
             <div class="field-group">
-                <input type="password" id="password" placeholder=" " required>
+                <input
+                    type="password" id="password" name="password" placeholder=" "required>
                 <label for="password">Password</label>
             </div>
 
-            <button class="login-btn">Sign In</button>
-            <h3>Don't have an acccount yet? <span>Contact your administrator</span></h3>
+            <button type="submit" class="login-btn">
+                Sign In
+            </button>
+
+            <h3>
+                Don't have an account yet?
+                <span>Contact your administrator</span>
+            </h3>
+
         </form>
+
     </main>
 
     <script src="../js/login.js"></script>
+
 </body>
 
 </html>

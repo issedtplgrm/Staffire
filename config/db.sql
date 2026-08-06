@@ -1,5 +1,6 @@
 CREATE DATABASE IF NOT EXISTS staffire;
 
+
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,
     username VARCHAR(50) UNIQUE NOT NULL,
@@ -52,3 +53,5 @@ CREATE TABLE IF NOT EXISTS leave_requests (
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (manager_id) REFERENCES users(id)
 );
+
+insert into employee (username, password, full_name, email, role) values("admin", "123admin", "admin_name", "admin@clsu.edu.ph", "admin")
