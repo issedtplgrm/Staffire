@@ -1,0 +1,84 @@
+.form-card{
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 20px;
+    margin: 24px;
+}
+.form-grid{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 14px;
+}
+.form-grid label{
+    display: block;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+.form-grid input, .form-grid select{
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--panel-row);
+    color: var(--text);
+    font-size: 13px;
+}
+.submit-btn{
+    background: var(--grad);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+}
+.cancel-link{
+    color: var(--muted);
+    font-size: 13px;
+    margin-left: 12px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+.alert{
+    margin: 24px 24px 0;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+.alert-error{ background: #4a1b1b; color: #ffb3b3; }
+.alert-success{ background: #16412c; color: #9de8bb; }
+.emp-table-wrap{
+    margin: 24px;
+    background: var(--panel);
+    border-radius: 14px;
+    padding: 20px;
+}
+.emp-table-wrap table{ width: 100%; border-collapse: collapse; }
+.emp-table-wrap thead th{
+    text-align: left;
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 8px 10px;
+}
+.emp-table-wrap tbody tr{ background: var(--panel-row); }
+.emp-table-wrap tbody tr td{ padding: 12px 10px; font-size: 13px; border-top: 4px solid var(--bg); }
+.emp-table-wrap tbody tr td:first-child{ border-top-left-radius: 10px; border-bottom-left-radius: 10px; }
+.emp-table-wrap tbody tr td:last-child{ border-top-right-radius: 10px; border-bottom-right-radius: 10px; }
+.role-badge{
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 12px;
+    background: #2a2f5c;
+    color: #c9ccdf;
+}
+.action-link{
+    font-size: 12px;
+    margin-right: 10px;
+    text-decoration: none;
+    color: #9db4ff;
+}
+.action-link.delete{ color: #ff8686; }

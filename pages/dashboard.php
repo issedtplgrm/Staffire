@@ -15,13 +15,14 @@
 <body>
     <header class="header">
         <nav>
-            <a href="#">Home</a>
+            <a href="dashboard.php">Home</a>
             <a href="#">Department</a>
             <a href="#">Leave Requests</a>
             <a href="#"> Attendance Records</a>
+            <a href="manageEmployees.php">Manage Employees</a>
         </nav>
         <div class="header-items">
-            <a href=""><img src="/assets/img/notifbell-icon.png" class="notifbell-icon" alt=""></a>
+            <a href=""><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt=""></a>
             <div class="pfp"></div>
         </div>
     </header>

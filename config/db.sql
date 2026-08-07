@@ -54,4 +54,19 @@ CREATE TABLE IF NOT EXISTS leave_requests (
     FOREIGN KEY (manager_id) REFERENCES users(id)
 );
 
+-- added departments table and foreign keys
+    CREATE TABLE IF NOT EXISTS departments (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL
+);
+ 
+ALTER TABLE users
+    ADD COLUMN department_id INT NULL AFTER role,
+    ADD FOREIGN KEY (department_id) REFERENCES departments(id);
+ 
+ALTER TABLE leave_requests
+    ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER manager_id;
+
 insert into users (username, password, full_name, email, role) values("admin", "123admin", "admin_name", "admin@clsu.edu.ph", "admin")
+
+insert into departments (name) values("IT Department"), ("HR Department"), ("Finance Department"), ("Marketing Department"), ("Sales Department");
