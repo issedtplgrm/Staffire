@@ -1,14 +1,64 @@
+<?php
+session_start();
+
+include '../config/db.php';
+
+$attendance_sql = "
+    SELECT
+        users.full_name,
+        users.department,
+        attendance.login_time,
+        attendance.logout_time,
+        CASE
+            WHEN attendance.id IS NULL THEN 'absent'
+            ELSE attendance.status
+        END AS status
+    FROM users
+    LEFT JOIN attendance
+        ON attendance.user_id = users.id
+        AND DATE(attendance.login_time) = CURDATE()
+    ORDER BY attendance.login_time DESC, users.full_name ASC
+";
+
+$attendance_result = $connection->query($attendance_sql);
+
+// Counters
+$attendance_rows = [];
+$present_count = 0;
+$absent_count = 0;
+$leave_req = 0;
+$on_leave = 0;
+
+// Save attendance rows and count statuses
+while ($row = $attendance_result->fetch_assoc()) {
+    $attendance_rows[] = $row;
+
+    if ($row["status"] === "absent") {
+        $absent_count++;
+    } else {
+        $present_count++;
+    }
+}
+
+$all_count = count($attendance_rows);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Staffire Dashboard</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet"
+    >
+
     <link rel="stylesheet" href="../assets/css/adminDashboard.css">
 </head>
 
@@ -21,76 +71,105 @@
             <a href="#"> Attendance Records</a>
             <a href="manageEmployees.php">Manage Employees</a>
         </nav>
+
         <div class="header-items">
             <a href=""><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt=""></a>
             <div class="pfp"></div>
         </div>
     </header>
+
     <main class="main-cont">
-        <!-- stats card -->
         <section class="stats">
 
+            <!-- Statistics cards -->
             <div class="stat-card">
                 <div class="icon-cont">
                     <div class="emp-icon-cont">
-                        <img src="../assets/img/emps-icon.png" class="emp-icon" alt="">
+                        <img
+                            src="../assets/img/emps-icon.png"
+                            class="emp-icon"
+                            alt=""
+                        >
                     </div>
                 </div>
+
                 <div class="stats-info">
                     <p class="stat-title">Total Employee</p>
-                    <p class="stat-value">88</p>
+                    <p class="stat-value"><?= $all_count ?></p>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="icon-cont">
                     <div class="present-icon-cont">
-                        <img src="../assets/img/present-icon.png" class="present-icon" alt="">
+                        <img
+                            src="../assets/img/present-icon.png"
+                            class="present-icon"
+                            alt=""
+                        >
                     </div>
                 </div>
+
                 <div class="stats-info">
                     <p class="stat-title">Present Today</p>
-                    <p class="stat-value">22</p>
+                    <p class="stat-value"><?=  $present_count ?></p>
                 </div>
             </div>
 
             <div class="stat-card">
                 <div class="icon-cont">
                     <div class="onleave-icon-cont">
-                        <img src="../assets/img/onleave-icon.png" class="onleave-icon" alt="">
+                        <img
+                            src="../assets/img/onleave-icon.png"
+                            class="onleave-icon"
+                            alt=""
+                        >
                     </div>
                 </div>
+
                 <div class="stats-info">
-                    <p class="stat-title">On leave</p>
-                    <p class="stat-value">08</p>
+                    <p class="stat-title">On Leave</p>
+                    <p class="stat-value"><?= $on_leave ?></p>
                 </div>
             </div>
 
             <div class="main-grid">
 
-                <!-- left side leave requests -->
+                <!-- Pending leave requests -->
                 <div class="panel">
                     <div class="panel-header">
-                        <h3>Pending Leave Requests (5)</h3>
+                        <h3>Pending Leave Requests (<?= $leave_req?>)</h3>
                         <span class="see-more">See More</span>
                     </div>
 
                     <div id="leave-list"></div>
-
-                    <button class="logout-btn">Logout</button>
+                        <form action="../process/logout.php">
+                            <button type="submit" class="logout-btn" href="../process/logout.php">Logout</button>
+                            
+                        </form>
                 </div>
 
-                <!-- right attendance -->
+                <!-- Attendance table -->
                 <div class="panel">
                     <div class="attendance-header">
-                        <h3>Attendance for DD/MM/YYYY</h3>
+                        <h3>Attendance for <?= date("d/m/Y") ?></h3>
                         <span class="see-more">See More</span>
                     </div>
+
                     <div class="filters">
-                        <button class="filter-btn active">All (88)</button>
-                        <button class="filter-btn">Present (37)</button>
-                        <button class="filter-btn">Absent (37)</button>
+                        <button class="filter-btn active">
+                            All (<?= $all_count ?>)
+                        </button>
+
+                        <button class="filter-btn">
+                            Present (<?= $present_count ?>)
+                        </button>
+
+                        <button class="filter-btn">
+                            Absent (<?= $absent_count ?>)
+                        </button>
                     </div>
+
                     <table>
                         <thead>
                             <tr>
@@ -100,14 +179,46 @@
                                 <th>Time Out</th>
                             </tr>
                         </thead>
-                        <tbody id="attendance-body"></tbody>
+
+                        <tbody>
+                            <?php if ($all_count > 0): ?>
+                                <?php foreach ($attendance_rows as $employee): ?>
+                                    <tr>
+                                        <td>
+                                            <div class="emp-cell">
+                                                <div class="emp-avatar"></div>
+
+                                                <?= htmlspecialchars($employee["full_name"]) ?>
+                                            </div>
+                                        </td>
+
+                                        <td class="dept-muted">
+                                            <?= htmlspecialchars($employee["department"]) ?>
+                                        </td>
+
+                                        <td>
+                                            <?= $employee["login_time"]
+                                                ? date("h:i A", strtotime($employee["login_time"]))
+                                                : "-" ?>
+                                        </td>
+
+                                        <td>
+                                            <?= $employee["logout_time"]
+                                                ? date("h:i A", strtotime($employee["logout_time"]))
+                                                : "-" ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4">No employees found.</td>
+                                </tr>
+                            <?php endif; ?>
+                        </tbody>
                     </table>
                 </div>
-
             </div>
-            </div>
-
-
         </section>
     </main>
 </body>

@@ -1,3 +1,9 @@
+<?php
+
+session_start(); //for validation
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -44,6 +50,15 @@
         <form class="right-panel" action="../process/login-process.php" method="POST">
             <h1>Welcome to <span>Staffire!</span></h1>
             <h2>Sign in to continue</h2>
+             <!-- validation -->
+                <?php
+                    if (isset($_SESSION["error"])) {
+                ?>
+                    <p class="login-error"><?php echo $_SESSION["error"]; ?></p>
+                <?php
+                     unset($_SESSION["error"]);
+                }
+                ?>
             <div class="field-group">
                 <input type="text" id="email" placeholder=" " name="email" required>
                 <label for="email">Email</label>
