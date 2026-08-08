@@ -1,12 +1,12 @@
 <?php
 session_start();
 
-include '../config/db.php';
+require_once __DIR__ . '/../config/db.php';
 
 $attendance_sql = "
     SELECT
         users.full_name,
-        users.department,
+        departments.name AS department,
         attendance.login_time,
         attendance.logout_time,
         CASE
@@ -17,6 +17,8 @@ $attendance_sql = "
     LEFT JOIN attendance
         ON attendance.user_id = users.id
         AND DATE(attendance.login_time) = CURDATE()
+    LEFT JOIN departments
+        ON users.department_id = departments.id
     ORDER BY attendance.login_time DESC, users.full_name ASC
 ";
 
@@ -91,7 +93,7 @@ $all_count = count($attendance_rows);
                             alt=""
                         >
                     </div>
-                </div>
+                </div>       
 
                 <div class="stats-info">
                     <p class="stat-title">Total Employee</p>
@@ -133,6 +135,7 @@ $all_count = count($attendance_rows);
                 </div>
             </div>
 
+        </section> 
             <div class="main-grid">
 
                 <!-- Pending leave requests -->
@@ -169,7 +172,7 @@ $all_count = count($attendance_rows);
                             Absent (<?= $absent_count ?>)
                         </button>
                     </div>
-
+                <div class="table-scroll">
                     <table>
                         <thead>
                             <tr>
@@ -217,9 +220,9 @@ $all_count = count($attendance_rows);
                             <?php endif; ?>
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
-        </section>
     </main>
 </body>
 

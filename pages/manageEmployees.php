@@ -15,7 +15,7 @@ unset($_SESSION['error'], $_SESSION['success']);
 
 //if admin is editing, automatically fill the input with that employees details
 $editing = null;
-    if (isset($GET['edit'])){
+    if (isset($_GET['edit'])){
         $id = (int) $_GET['edit'];
         $stmt = $connection->prepare("SELECT * FROM users WHERE id = ?");
         $stmt->bind_param("i", $id);
@@ -133,7 +133,7 @@ $employees = $connection->query(
             <button type="submit" class="submit-btn"><?= $editing ? 'Save Changes' : 'Add Employee' ?></button>
             <!-- if admin is editing, show a cancel button -->
             <?php if ($editing): ?>
-                <a href="manage_employees.php" class="cancel-link">Cancel</a>
+                <a href="manageEmployees.php" class="cancel-link">Cancel</a>
             <?php endif; ?>
         </form>
     </div>
@@ -161,7 +161,7 @@ $employees = $connection->query(
                         <td><span class="role-badge"><?= htmlspecialchars(ucfirst($emp['role'])) ?></span></td>
                         <td><?= htmlspecialchars($emp['department'] ?? 'Unassigned') ?></td>
                         <td>
-                            <a href="manage_employees.php?edit=<?= $emp['id'] ?>" class="action-link">Edit</a>
+                            <a href="manageEmployees.php?edit=<?= $emp['id'] ?>" class="action-link">Edit</a>
                             <a href="../process/deleteEmp-process.php?id=<?= $emp['id'] ?>" class="action-link delete"
                                onclick="return confirm('Delete this user? This cannot be undone.');">Delete</a>
                         </td>

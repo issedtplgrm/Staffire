@@ -80,5 +80,10 @@
     margin-right: 10px;
     text-decoration: none;
     color: #9db4ff;
+    background: #1f2240;
+    padding: 4px 10px;
 }
-.action-link.delete{ color: #ff8686; }
+.action-link.delete{
+     color: #ff8686; 
+     background: #3a1f1f;
+    }

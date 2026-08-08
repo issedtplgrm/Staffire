@@ -12,6 +12,7 @@ $full_name = trim($_POST['full_name'] ?? '');
 $username  = trim($_POST['username'] ?? '');
 $email     = trim($_POST['email'] ?? '');
 $role      = $_POST['role'] ?? 'employee';
+//check if the user being edited has a department_id, if not set it to null
 $department_id = ($_POST['department_id'] ?? '') !== '' ? (int) $_POST['department_id'] : null;
 
 if (empty($full_name) || empty($username) || empty($email) || empty($role)) {
@@ -26,6 +27,7 @@ $stmt = $connection->prepare(
      WHERE id = ?"
 );
 
+$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 $stmt->bind_param("sssssi", $full_name, $username, $email, $role, $department_id, $id);
 
 if ($stmt->execute()) {

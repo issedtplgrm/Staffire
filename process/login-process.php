@@ -33,7 +33,7 @@ if ($result->num_rows === 0) {
 $users = $result->fetch_assoc();
 
 // Check password
-if ($password === $users["password"]) {
+if (password_verify($password, $users["password"])) {
 
     // Login successful
     session_regenerate_id(true);
@@ -50,9 +50,6 @@ if ($password === $users["password"]) {
               WHERE user_id = ?
               AND DATE(login_time) = CURDATE()
               LIMIT 1";
-
-
-    
 
     $check_stmt = $connection->prepare($check);
     $check_stmt->bind_param("i", $user_id);

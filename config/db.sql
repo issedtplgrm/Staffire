@@ -67,6 +67,6 @@ ALTER TABLE users
 ALTER TABLE leave_requests
     ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER manager_id;
 
-insert into users (username, password, full_name, email, role) values("admin", "123admin", "admin_name", "admin@clsu.edu.ph", "admin")
+insert into users (username, password, full_name, email, role) values("admin", "123admin", "admin_name", "admin@clsu.edu.ph", "admin");
 
 insert into departments (name) values("IT Department"), ("HR Department"), ("Finance Department"), ("Marketing Department"), ("Sales Department");

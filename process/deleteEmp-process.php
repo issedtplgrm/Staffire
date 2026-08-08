@@ -11,7 +11,7 @@ $id = (int) ($_GET['id'] ?? 0);
 
 if ($id === 0) {
     $_SESSION['error'] = "Invalid employee id.";
-    header("Location: ../pages/manage_employees.php");
+    header("Location: ../pages/manageEmployees.php");
     exit();
 }
 
@@ -24,5 +24,5 @@ if ($stmt->execute()) {
     $_SESSION['error'] = "Could not delete employee: " . $connection->error;
 }
 
-header("Location: ../pages/manage_employees.php");
+header("Location: ../pages/manageEmployees.php");
 exit();
