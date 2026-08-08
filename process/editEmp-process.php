@@ -27,7 +27,6 @@ $stmt = $connection->prepare(
      WHERE id = ?"
 );
 
-$hashed_password = password_hash($password, PASSWORD_DEFAULT);
 $stmt->bind_param("sssssi", $full_name, $username, $email, $role, $department_id, $id);
 
 if ($stmt->execute()) {

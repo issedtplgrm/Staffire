@@ -133,7 +133,7 @@ $employees = $connection->query(
             <button type="submit" class="submit-btn"><?= $editing ? 'Save Changes' : 'Add Employee' ?></button>
             <!-- if admin is editing, show a cancel button -->
             <?php if ($editing): ?>
-                <a href="..pages/manageEmployees.php" class="cancel-link">Cancel</a>
+                <a href="../pages/manageEmployees.php" class="cancel-link">Cancel</a>
             <?php endif; ?>
         </form>
     </div>

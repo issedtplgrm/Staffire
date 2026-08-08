@@ -18,9 +18,7 @@ $password = trim($_POST["password"] ?? "");
 // ==============================
 
 if (empty($login) || empty($password)) {
-
-
-
+    $_SESSION["error"] = "Please fill in both fields.";
     header("Location: ../auth/login.php");
     exit();
 }

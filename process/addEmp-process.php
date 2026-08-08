@@ -12,7 +12,7 @@
     $email = trim($_POST['email'] ?? '');
     $password = trim($_POST['password'] ?? '');
     $role = trim($_POST['role'] ?? '');
-    $department_id = trim($_POST['department_id'] ?? '' !== '' ? (int)$_POST['department_id'] : null);
+    $department_id = ($_POST['department_id'] ?? '') !== '' ? (int) $_POST['department_id'] : null;
 
     if(empty($full_name) || empty($username) || empty($email) || empty($password) || empty($role)) {
         $_SESSION['error'] = "All fields are required.";
@@ -24,6 +24,7 @@
         "INSERT INTO users (full_name, username, email, password, role, department_id)
          VALUES (?, ?, ?, ?, ?, ?)"
          );
+         
     $stmt->bind_param("sssssi", $full_name, $username, $email, password_hash($password, PASSWORD_DEFAULT), $role, $department_id);
     
     if ($stmt->execute()) {
