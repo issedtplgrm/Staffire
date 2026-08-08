@@ -76,7 +76,7 @@ session_start(); //for validation
         </form>
     </main>
 
-    <script src="../js/login.js"></script>
+    <script src="../assets/js/login.js"></script>
 </body>
 
 </html>

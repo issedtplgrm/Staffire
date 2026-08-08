@@ -82,6 +82,9 @@ ALTER TABLE leave_requests DROP FOREIGN KEY leave_requests_ibfk_1;
 ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_ibfk_1
     FOREIGN KEY (user_id) REFERENCES users(id)
     ON DELETE CASCADE;
+-- added reason column
+ALTER TABLE leave_requests ADD COLUMN reason VARCHAR(255) NULL AFTER type;
+
 
 -- leave_requests.manager_id: if the MANAGER is deleted, just blank out
 -- who approved it  don't delete the employee's leave request

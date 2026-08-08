@@ -34,5 +34,5 @@ $leave_requests = $result->fetch_all(MYSQLI_ASSOC);
 
 //then converts the array into json and sends it to the client
 echo json_encode($leave_requests);
-
+    
 ?>

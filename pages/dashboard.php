@@ -69,7 +69,7 @@ $all_count = count($attendance_rows);
         <nav>
             <a href="dashboard.php">Home</a>
             <a href="#">Department</a>
-            <a href="#">Leave Requests</a>
+            <a href="leaveRequests.php">Leave Requests</a>
             <a href="#"> Attendance Records</a>
             <a href="../pages/manageEmployees.php">Manage Employees</a>
         </nav>
@@ -136,13 +136,13 @@ $all_count = count($attendance_rows);
             </div>
 
         </section> 
-            <div class="main-grid">
+            <div class="main-grid"> 
 
                 <!-- Pending leave requests -->
                 <div class="panel">
                     <div class="panel-header">
-                        <h3>Pending Leave Requests (<?= $leave_req?>)</h3>
-                        <span class="see-more">See More</span>
+                        <h3>Pending Leave Requests (<span id="leave-count"><?= $leave_req ?></span>)</h3>
+                        <a href="leaveRequests.php" class="see-more">See More</a>
                     </div>
 
                     <div id="leave-list"></div>
@@ -160,15 +160,15 @@ $all_count = count($attendance_rows);
                     </div>
 
                     <div class="filters">
-                        <button class="filter-btn active">
+                        <button class="filter-btn active" data-filter="all">
                             All (<?= $all_count ?>)
                         </button>
 
-                        <button class="filter-btn">
+                        <button class="filter-btn" data-filter="present">
                             Present (<?= $present_count ?>)
                         </button>
 
-                        <button class="filter-btn">
+                        <button class="filter-btn" data-filter="absent">
                             Absent (<?= $absent_count ?>)
                         </button>
                     </div>
@@ -183,47 +183,14 @@ $all_count = count($attendance_rows);
                             </tr>
                         </thead>
 
-                        <tbody>
-                            <?php if ($all_count > 0): ?>
-                                <?php foreach ($attendance_rows as $employee): ?>
-                                    <tr>
-                                        <td>
-                                            <div class="emp-cell">
-                                                <div class="emp-avatar"></div>
-
-                                                <?= htmlspecialchars($employee["full_name"]) ?>
-                                            </div>
-                                        </td>
-
-                                        <td class="dept-muted">
-                                            <?= htmlspecialchars($employee["department"]) ?>
-                                        </td>
-
-                                        <td>
-                                            <?= $employee["login_time"]
-                                                ? date("h:i A", strtotime($employee["login_time"]))
-                                                : "-" ?>
-                                        </td>
-
-                                        <td>
-                                            <?= $employee["logout_time"]
-                                                ? date("h:i A", strtotime($employee["logout_time"]))
-                                                : "-" ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-
-                            <?php else: ?>
-                                <tr>
-                                    <td colspan="4">No employees found.</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
+                        <tbody id="attendance-body"></tbody>
                     </table>
                     </div>
                 </div>
             </div>
     </main>
+
+    <script src="../assets/js/admindashboard.js"></script>
 </body>
 
 </html>
