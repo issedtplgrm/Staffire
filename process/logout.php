@@ -2,50 +2,162 @@
 
 session_start();
 
-include '../config/db.php';
+require_once __DIR__ . '/../config/db.php';
 
-// Check if someone is logged in
-if (!isset($_SESSION["id"])) {
+
+// ==============================
+// GET LOGIN DATA
+// ==============================
+
+$login = trim($_POST["email"] ?? "");
+$password = trim($_POST["password"] ?? "");
+
+
+// ==============================
+// CHECK EMPTY FIELDS
+// ==============================
+
+if (empty($login) || empty($password)) {
+
+    $_SESSION["error"] = "Please enter your email and password.";
+
     header("Location: ../auth/login.php");
     exit();
 }
 
-$user_id = $_SESSION["id"];
 
-// Delete employee's record for today
-$delete_sql = "DELETE FROM attendance
-               WHERE user_id = ?
-               AND DATE(login_time) = CURDATE()";
+// ==============================
+// FIND USER
+// ==============================
 
-$delete_stmt = $connection->prepare($delete_sql);
-$delete_stmt->bind_param("i", $user_id);
-$delete_stmt->execute();
+$sql = "SELECT *
+        FROM users
+        WHERE username = ? OR email = ?
+        LIMIT 1";
 
-// Check whether the attendance table is empty
-$count_sql = "SELECT COUNT(*) AS total FROM attendance";
+$stmt = $connection->prepare($sql);
 
-$result = $connection->query($count_sql);
-$count_result = $result->fetch_assoc();
+$stmt->bind_param(
+    "ss",
+    $login,
+    $login
+);
 
-if ($count_result["total"] == 0) {
-    $connection->query("ALTER TABLE attendance AUTO_INCREMENT = 1");
+$stmt->execute();
+
+$result = $stmt->get_result();
+
+
+// ==============================
+// USER NOT FOUND
+// ==============================
+
+if ($result->num_rows === 0) {
+
+    $_SESSION["error"] = "Invalid username or password.";
+
+    header("Location: ../auth/login.php");
+    exit();
 }
 
-// Save current timestamp
-$logout = "UPDATE attendance
-           SET logout_time = NOW()
-           WHERE user_id = ?
-           AND DATE(login_time) = CURDATE()
-           AND logout_time IS NULL";
 
-$logout_stmt = $connection->prepare($logout);
-$logout_stmt->bind_param("i", $user_id);
-$logout_stmt->execute();
+$users = $result->fetch_assoc();
 
-session_unset();
-session_destroy();
 
-header("Location: ../auth/login.php");
+// ==============================
+// CHECK PASSWORD
+// ==============================
+
+if (!password_verify($password, $users["password"])) {
+
+    $_SESSION["error"] = "Invalid username or password.";
+
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+
+// ==============================
+// LOGIN SUCCESSFUL
+// ==============================
+
+session_regenerate_id(true);
+
+$_SESSION["id"] = $users["id"];
+$_SESSION["email"] = $users["email"];
+$_SESSION["username"] = $users["username"];
+$_SESSION["role"] = $users["role"];
+
+$user_id = $users["id"];
+
+
+// ==============================
+// CHECK EXISTING ATTENDANCE TODAY
+// ==============================
+
+$check_sql = "SELECT id
+              FROM attendance
+              WHERE user_id = ?
+              AND DATE(login_time) = CURDATE()
+              LIMIT 1";
+
+$check_stmt = $connection->prepare($check_sql);
+
+$check_stmt->bind_param(
+    "i",
+    $user_id
+);
+
+$check_stmt->execute();
+
+$attendance_result = $check_stmt->get_result();
+
+
+// ==============================
+// IF ATTENDANCE ALREADY EXISTS
+// DELETE OLD RECORD
+// ==============================
+
+if ($attendance_result->num_rows > 0) {
+
+    $delete_sql = "DELETE FROM attendance
+                   WHERE user_id = ?
+                   AND DATE(login_time) = CURDATE()";
+
+    $delete_stmt = $connection->prepare($delete_sql);
+
+    $delete_stmt->bind_param(
+        "i",
+        $user_id
+    );
+
+    $delete_stmt->execute();
+}
+
+
+// ==============================
+// CREATE NEW ATTENDANCE RECORD
+// ==============================
+
+$attendance_sql = "INSERT INTO attendance
+                   (user_id, login_time, logout_time, status)
+                   VALUES (?, NOW(), NULL, 'present')";
+
+$attendance_stmt = $connection->prepare($attendance_sql);
+
+$attendance_stmt->bind_param(
+    "i",
+    $user_id
+);
+
+$attendance_stmt->execute();
+
+
+// ==============================
+// GO TO DASHBOARD
+// ==============================
+
+header("Location: ../pages/dashboard.php");
 exit();
 
 ?>

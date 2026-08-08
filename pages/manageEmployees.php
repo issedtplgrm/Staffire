@@ -58,7 +58,7 @@ $employees = $connection->query(
             <a href="#">Department</a>
             <a href="#">Leave Requests</a>
             <a href="#">Attendance Records</a>
-            <a href="manageEmployees.php">Manage Employees</a>
+            <a href="../pages/manageEmployees.php">Manage Employees</a>
         </nav>
         <div class="header-items">
             <a href=""><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt=""></a>
@@ -133,7 +133,7 @@ $employees = $connection->query(
             <button type="submit" class="submit-btn"><?= $editing ? 'Save Changes' : 'Add Employee' ?></button>
             <!-- if admin is editing, show a cancel button -->
             <?php if ($editing): ?>
-                <a href="manageEmployees.php" class="cancel-link">Cancel</a>
+                <a href="..pages/manageEmployees.php" class="cancel-link">Cancel</a>
             <?php endif; ?>
         </form>
     </div>
@@ -161,7 +161,7 @@ $employees = $connection->query(
                         <td><span class="role-badge"><?= htmlspecialchars(ucfirst($emp['role'])) ?></span></td>
                         <td><?= htmlspecialchars($emp['department'] ?? 'Unassigned') ?></td>
                         <td>
-                            <a href="manageEmployees.php?edit=<?= $emp['id'] ?>" class="action-link">Edit</a>
+                            <a href="../pages/manageEmployees.php?edit=<?= $emp['id'] ?>" class="action-link">Edit</a>
                             <a href="../process/deleteEmp-process.php?id=<?= $emp['id'] ?>" class="action-link delete"
                                onclick="return confirm('Delete this user? This cannot be undone.');">Delete</a>
                         </td>

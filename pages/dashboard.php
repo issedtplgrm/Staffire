@@ -71,7 +71,7 @@ $all_count = count($attendance_rows);
             <a href="#">Department</a>
             <a href="#">Leave Requests</a>
             <a href="#"> Attendance Records</a>
-            <a href="manageEmployees.php">Manage Employees</a>
+            <a href="../pages/manageEmployees.php">Manage Employees</a>
         </nav>
 
         <div class="header-items">

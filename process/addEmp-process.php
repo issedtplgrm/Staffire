@@ -16,7 +16,7 @@
 
     if(empty($full_name) || empty($username) || empty($email) || empty($password) || empty($role)) {
         $_SESSION['error'] = "All fields are required.";
-        header("Location: manageEmployees.php");
+        header("Location: ../pages/manageEmployees.php");
         exit();
     }   
     
@@ -32,6 +32,6 @@
         $_SESSION['error'] = "Could not add employee: " . $stmt->error;
     }
 
-    header("Location: manageEmployees.php");
+    header("Location: ../pages/manageEmployees.php");
     exit();
 ?>

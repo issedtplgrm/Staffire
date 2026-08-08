@@ -4,95 +4,180 @@ session_start();
 
 require_once __DIR__ . '/../config/db.php';
 
+
+// ==============================
+// GET LOGIN DATA
+// ==============================
+
 $login = trim($_POST["email"] ?? "");
 $password = trim($_POST["password"] ?? "");
 
-// Check if empty
+
+// ==============================
+// CHECK EMPTY FIELDS
+// ==============================
+
 if (empty($login) || empty($password)) {
-    $_SESSION["error"] = "Please enter your email and password.";
+
+
+
     header("Location: ../auth/login.php");
     exit();
 }
 
-// Find user
-$sql = "SELECT * FROM users WHERE username = ? OR email = ? LIMIT 1";
+
+// ==============================
+// FIND USER
+// ==============================
+
+$sql = "SELECT *
+        FROM users
+        WHERE username = ? OR email = ?
+        LIMIT 1";
 
 $stmt = $connection->prepare($sql);
+
 $stmt->bind_param("ss", $login, $login);
+
 $stmt->execute();
 
 $result = $stmt->get_result();
 
-// If no account found
+
+// ==============================
+// USER NOT FOUND
+// ==============================
+
 if ($result->num_rows === 0) {
+
     $_SESSION["error"] = "Invalid username or password.";
+
     header("Location: ../auth/login.php");
     exit();
 }
 
+
 $users = $result->fetch_assoc();
 
-// Check password
-if (password_verify($password, $users["password"])) {
 
-    // Login successful
-    session_regenerate_id(true);
+// ==============================
+// CHECK PASSWORD
+// ==============================
 
-    $_SESSION["id"] = $users["id"];
-    $_SESSION["email"] = $users["email"];
-    $_SESSION["username"] = $users["username"];
+if (!password_verify($password, $users["password"])) {
 
-    $user_id = $users["id"];
+    $_SESSION["error"] = "Invalid username or password.";
 
-    // Check if this user already timed in TODAY
-    $check = "SELECT id
+    header("Location: ../auth/login.php");
+    exit();
+}
+
+
+// ==============================
+// LOGIN SUCCESSFUL
+// ==============================
+
+session_regenerate_id(true);
+
+$_SESSION["id"] = $users["id"];
+$_SESSION["email"] = $users["email"];
+$_SESSION["username"] = $users["username"];
+$_SESSION["role"] = $users["role"];
+
+$user_id = $users["id"];
+
+
+// ==================================================
+// STEP 1
+// TIME OUT ANY OTHER ACCOUNT CURRENTLY ACTIVE
+// ==================================================
+
+$timeout_sql = "UPDATE attendance
+                SET logout_time = NOW()
+                WHERE DATE(login_time) = CURDATE()
+                AND logout_time IS NULL
+                AND user_id != ?";
+
+$timeout_stmt = $connection->prepare($timeout_sql);
+
+$timeout_stmt->bind_param(
+    "i",
+    $user_id
+);
+
+$timeout_stmt->execute();
+
+
+// ==================================================
+// STEP 2
+// CHECK IF THIS USER ALREADY HAS ATTENDANCE TODAY
+// ==================================================
+
+$check_sql = "SELECT id
               FROM attendance
               WHERE user_id = ?
               AND DATE(login_time) = CURDATE()
               LIMIT 1";
 
-    $check_stmt = $connection->prepare($check);
-    $check_stmt->bind_param("i", $user_id);
-    $check_stmt->execute();
+$check_stmt = $connection->prepare($check_sql);
 
-    $attendance_result = $check_stmt->get_result();
+$check_stmt->bind_param(
+    "i",
+    $user_id
+);
 
-    //reset attendance if signed in for the second time
-    if($attendance_result->num_rows > 0){
-    
-    // $delete_attendance = "DELETE from attendance where user_id = ?";
-    // $delete = $connection->
+$check_stmt->execute();
 
-    $update_attendance = "UPDATE attendance SET login_time = NOW(), logout_time = NULL, status ='present'
-                        WHERE user_id = ? AND DATE(login_time) = CURDATE()";
-    
-    $update = $connection->prepare($update_attendance);
-    $update->bind_param("i", $user_id);
-    $update->execute();
+$attendance_result = $check_stmt->get_result();
 
 
-    }
+// ==================================================
+// STEP 3
+// DELETE THIS USER'S OLD ATTENDANCE
+// ==================================================
 
-    // If no time-in exists today, insert one
-    else {
-        $attendance = "INSERT INTO attendance
-                       (user_id, login_time, status)
-                       VALUES (?, NOW(), 'present')";
+if ($attendance_result->num_rows > 0) {
 
-        $get_attendance = $connection->prepare($attendance);
-        $get_attendance->bind_param("i", $user_id);
-        $get_attendance->execute();
-    }
+    $delete_sql = "DELETE FROM attendance
+                   WHERE user_id = ?
+                   AND DATE(login_time) = CURDATE()";
 
-    
-    // Redirect to dashboard
-    header("Location: ../pages/dashboard.php");
-    exit();
+    $delete_stmt = $connection->prepare($delete_sql);
 
-} else {
-    $_SESSION["error"] = "Invalid username or password.";
-    header("Location: ../auth/login.php");
-    exit();
+    $delete_stmt->bind_param(
+        "i",
+        $user_id
+    );
+
+    $delete_stmt->execute();
 }
+
+
+// ==================================================
+// STEP 4
+// CREATE NEW ATTENDANCE RECORD
+// ==================================================
+
+$attendance_sql = "INSERT INTO attendance
+                   (user_id, login_time, logout_time, status)
+                   VALUES (?, NOW(), NULL, 'present')";
+
+$attendance_stmt = $connection->prepare($attendance_sql);
+
+$attendance_stmt->bind_param(
+    "i",
+    $user_id
+);
+
+$attendance_stmt->execute();
+
+
+// ==================================================
+// STEP 5
+// GO TO DASHBOARD
+// ==================================================
+
+header("Location: ../pages/dashboard.php");
+exit();
 
 ?>

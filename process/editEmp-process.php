@@ -17,7 +17,7 @@ $department_id = ($_POST['department_id'] ?? '') !== '' ? (int) $_POST['departme
 
 if (empty($full_name) || empty($username) || empty($email) || empty($role)) {
     $_SESSION['error'] = "All fields are required.";
-    header("Location: manageEmployees.php");
+    header("Location: ../pages/manageEmployees.php");
     exit();
 }
 
@@ -36,5 +36,5 @@ if ($stmt->execute()) {
     $_SESSION['error'] = "Could not update employee: " . $stmt->error;
 }
 
-header("Location: manageEmployees.php");
+header("Location: ../pages/manageEmployees.php");
 exit();
