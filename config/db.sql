@@ -70,3 +70,22 @@ ALTER TABLE leave_requests
 insert into users (username, password, full_name, email, role) values("admin", "123admin", "admin_name", "admin@clsu.edu.ph", "admin");
 
 insert into departments (name) values("IT Department"), ("HR Department"), ("Finance Department"), ("Marketing Department"), ("Sales Department");
+
+-- attendance: if the employee is deleted, delete their attendance rows too
+ALTER TABLE attendance DROP FOREIGN KEY attendance_ibfk_1;
+ALTER TABLE attendance ADD CONSTRAINT attendance_ibfk_1
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE;
+
+-- leave_requests.user_id: if the employee is deleted, delete their leave requests too
+ALTER TABLE leave_requests DROP FOREIGN KEY leave_requests_ibfk_1;
+ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_ibfk_1
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    ON DELETE CASCADE;
+
+-- leave_requests.manager_id: if the MANAGER is deleted, just blank out
+-- who approved it  don't delete the employee's leave request
+ALTER TABLE leave_requests DROP FOREIGN KEY leave_requests_ibfk_2;
+ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_ibfk_2
+    FOREIGN KEY (manager_id) REFERENCES users(id)
+    ON DELETE SET NULL;
