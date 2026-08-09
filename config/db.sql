@@ -85,10 +85,17 @@ ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_ibfk_1
 -- added reason column
 ALTER TABLE leave_requests ADD COLUMN reason VARCHAR(255) NULL AFTER type;
 
-
 -- leave_requests.manager_id: if the MANAGER is deleted, just blank out
 -- who approved it  don't delete the employee's leave request
 ALTER TABLE leave_requests DROP FOREIGN KEY leave_requests_ibfk_2;
 ALTER TABLE leave_requests ADD CONSTRAINT leave_requests_ibfk_2
     FOREIGN KEY (manager_id) REFERENCES users(id)
     ON DELETE SET NULL;
+
+-- test the leave request
+insert into leave_requests (user_id, start_date, end_date, type, status, manager_id, reason) values
+(5, '2026-08-09', '2026-08-21', 'vacation', 'approved', 1, 'Relapse :,( '),
+(5, '2026-08-09', '2026-08-23', 'sick', 'approved', 1, 'May nalaman');
+
+select * from leave_requests;
+

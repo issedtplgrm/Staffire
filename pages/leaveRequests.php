@@ -1,10 +1,15 @@
 <?php
-session_start();
+    require_once __DIR__ . '/../config/db.php';
+    require_once __DIR__ . '/../process/access_control.php';
 
-require_once __DIR__ . '/../config/db.php';
-require_once __DIR__ . '/../process/access_control.php';
+    session_start();
+    //check if a user is logged in
+    if (!isset($_SESSION['id'])) {
+    header("Location: ../auth/login.php");
+    exit();
+}
 
-//added query for on leave and status of leave
+//added status of leave
 $attendance_sql = "
     SELECT
         users.full_name,
@@ -54,30 +59,25 @@ while ($row = $attendance_result->fetch_assoc()) {
 
 $all_count = count($attendance_rows);
 
-$deparrtment_sql = "SELECT * FROM departments";
-$departments = $connection->query($deparrtment_sql);
-?>
+$department_sql = "SELECT * FROM departments";
+$departments = $connection->query($department_sql);
+ ?>
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Staffire Dashboard</title>
+    <title>Leave Requests</title>
 
+    <link rel="stylesheet" href="../assets/css/leaveRequests.css">
+ 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link
-        href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
-        rel="stylesheet">
-
-    <link rel="stylesheet" href="../assets/css/adminDashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
-
 <body>
-    <header class="header">
+   <header class="header">
         <nav>
             <!-- All -->
             <a href="dashboard.php">Home</a>
@@ -160,63 +160,50 @@ $departments = $connection->query($deparrtment_sql);
                     <p class="stat-value"><?= $on_leave ?></p>
                 </div>
             </div>
-
         </section>
-        <div class="main-grid">
 
-            <!-- Pending leave requests -->
-            <div class="panel">
-                <div class="panel-header">
-                    <h3>Pending Leave Requests (<span id="leave-count"><?= $leave_req ?></span>)</h3>
-                    <a href="leaveRequests.php" class="see-more">See More</a>
-                </div>
-
-                <div id="leave-list"></div>
-                <form action="../process/logout.php">
-                    <button type="submit" class="logout-btn" href="../process/logout.php">Logout</button>
-
-                </form>
+        <div class="lr-table-wrap">
+            <div class="lr-toolbar">
+                <h3>Leave Requests</h3>
+ 
+                <input type="text" id="lr-search" class="lr-search" placeholder="Search Employee Name...">
+ 
+                <select id="lr-department" class="lr-select">
+                    <option value="all">All Departments</option>
+                    <?php while ($d = $departments->fetch_assoc()): ?>
+                        <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
+                    <?php endwhile; ?>
+                </select>
+ 
+                <select id="lr-status" class="lr-select">
+                    <option value="all">All Statuses</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+ 
+                <input type="date" id="lr-date-from" class="lr-date">
+                <input type="date" id="lr-date-to" class="lr-date">
             </div>
-
-            <!-- Attendance table -->
-            <div class="panel">
-                <div class="attendance-header">
-                    <h3>Attendance for <?= date("d/m/Y") ?></h3>
-                    <span class="see-more">See More</span>
-                </div>
-
-                <div class="filters">
-                    <button class="filter-btn active" data-filter="all">
-                        All (<?= $all_count ?>)
-                    </button>
-
-                    <button class="filter-btn" data-filter="present">
-                        Present (<?= $present_count ?>)
-                    </button>
-
-                    <button class="filter-btn" data-filter="absent">
-                        Absent (<?= $absent_count ?>)
-                    </button>
-                </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Employee Name</th>
-                                <th>Department</th>
-                                <th>Time In</th>
-                                <th>Time Out</th>
-                            </tr>
-                        </thead>
-
-                        <tbody id="attendance-body"></tbody>
-                    </table>
-                </div>
-            </div>
+ 
+            <table>
+                <thead>
+                    <tr>
+                        <th>Employee Name</th>
+                        <th>Department</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Duration</th>
+                        <th>Reason</th>
+                        <th>Status</th>
+                        <th>Requested On</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="lr-table-body"></tbody>
+            </table>
         </div>
     </main>
-
-    <script src="../assets/js/admindashboard.js"></script>
+    <script src="../assets/js/leaveRequests.js"></script>
 </body>
-
 </html>
