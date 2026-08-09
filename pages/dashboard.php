@@ -2,6 +2,7 @@
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../process/access_control.php';
 
 $attendance_sql = "
     SELECT
@@ -67,11 +68,29 @@ $all_count = count($attendance_rows);
 <body>
     <header class="header">
         <nav>
+            <!-- All -->
             <a href="dashboard.php">Home</a>
             <a href="#">Department</a>
+        <!-- Admin and Manager -->
+            <?php if (isRole("admin") || isRole("manager")): ?>
             <a href="leaveRequests.php">Leave Requests</a>
+            <?php endif; ?>
+
+            <!-- Employee and Manager(?) -->
+             <?php if(isRole("manager") || isRole("employee")): ?>
+            <a href="#">Request Leave</a>
+                <?php endif; ?>
+            
+        <!-- Admin and Manager -->
+         <?php if(isRole("admin") || isRole("manager")): ?>
             <a href="#"> Attendance Records</a>
+            <?php endif; ?>
+
+            <!-- Admin -->
+        <?php if(isRole("admin")): ?>
+
             <a href="../pages/manageEmployees.php">Manage Employees</a>
+        <?php endif; ?>
         </nav>
 
         <div class="header-items">

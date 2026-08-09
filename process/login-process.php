@@ -5,28 +5,24 @@ session_start();
 require_once __DIR__ . '/../config/db.php';
 
 
-// ==============================
-// GET LOGIN DATA
-// ==============================
+
 
 $login = trim($_POST["email"] ?? "");
 $password = trim($_POST["password"] ?? "");
 
 
-// ==============================
-// CHECK EMPTY FIELDS
-// ==============================
+
 
 if (empty($login) || empty($password)) {
-    $_SESSION["error"] = "Please fill in both fields.";
+
+
+
     header("Location: ../auth/login.php");
     exit();
 }
 
 
-// ==============================
-// FIND USER
-// ==============================
+
 
 $sql = "SELECT *
         FROM users
@@ -42,9 +38,7 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 
-// ==============================
-// USER NOT FOUND
-// ==============================
+
 
 if ($result->num_rows === 0) {
 
@@ -58,9 +52,7 @@ if ($result->num_rows === 0) {
 $users = $result->fetch_assoc();
 
 
-// ==============================
-// CHECK PASSWORD
-// ==============================
+
 
 if (!password_verify($password, $users["password"])) {
 
@@ -71,9 +63,6 @@ if (!password_verify($password, $users["password"])) {
 }
 
 
-// ==============================
-// LOGIN SUCCESSFUL
-// ==============================
 
 session_regenerate_id(true);
 
@@ -85,10 +74,7 @@ $_SESSION["role"] = $users["role"];
 $user_id = $users["id"];
 
 
-// ==================================================
-// STEP 1
-// TIME OUT ANY OTHER ACCOUNT CURRENTLY ACTIVE
-// ==================================================
+
 
 $timeout_sql = "UPDATE attendance
                 SET logout_time = NOW()
@@ -106,11 +92,7 @@ $timeout_stmt->bind_param(
 $timeout_stmt->execute();
 
 
-// ==================================================
-// STEP 2
-// CHECK IF THIS USER ALREADY HAS ATTENDANCE TODAY
-// ==================================================
-
+//check if has attendance
 $check_sql = "SELECT id
               FROM attendance
               WHERE user_id = ?
@@ -129,10 +111,7 @@ $check_stmt->execute();
 $attendance_result = $check_stmt->get_result();
 
 
-// ==================================================
-// STEP 3
-// DELETE THIS USER'S OLD ATTENDANCE
-// ==================================================
+//delete recent
 
 if ($attendance_result->num_rows > 0) {
 
@@ -151,10 +130,7 @@ if ($attendance_result->num_rows > 0) {
 }
 
 
-// ==================================================
-// STEP 4
-// CREATE NEW ATTENDANCE RECORD
-// ==================================================
+//create new attendance record
 
 $attendance_sql = "INSERT INTO attendance
                    (user_id, login_time, logout_time, status)
@@ -170,10 +146,7 @@ $attendance_stmt->bind_param(
 $attendance_stmt->execute();
 
 
-// ==================================================
-// STEP 5
-// GO TO DASHBOARD
-// ==================================================
+
 
 header("Location: ../pages/dashboard.php");
 exit();
