@@ -15,11 +15,11 @@
 // empty string if no filter is provided
 
 //employee search filter
-$search = trim($_GET['search'] ?? '');
-$department = trim($GET['department'] ?? '');
-$status = trim($_GET['status'] ?? '');
-$start_date = trim($_GET['start_date'] ?? '');
-$end_date = trim($_GET['end_date'] ?? '');
+$search      = trim($_GET['search'] ?? '');
+$department  = trim($_GET['department'] ?? '');
+$status      = trim($_GET['status'] ?? '');
+$date_from   = trim($_GET['date_from'] ?? '');
+$date_to     = trim($_GET['date_to'] ?? '');
 
 // containers
 $conditions = []; //WHERE...
@@ -37,36 +37,36 @@ if ($search !== '') {
 
 if ($department !== '' && $department !== 'all'){
     //will search for that department
-    $conditions = "d.name = ?";
+    $conditions[] = "d.name = ?";
     $params[] = $department;
     $types .= 's';
 }
 
 if ($status !== '' && $status !== 'all'){
     //will searchf for the status
-    $conditons = "lr.status = ?";
-    $params = $status;
+    $conditions[] = "lr.status = ?";
+    $params[] = $status;
     $types .= 's';
 }
 
-if($start_date !== ''){
+if($date_from !== ''){
     //will search for the start date of leave
-    $conditons = "lr.start_date >= ?";
-    $params[] = $start_date;
+    $conditions[] = "lr.start_date >= ?";
+    $params[] = $date_from;
     $types .= 's';
 }
 
-if($end_date !== ''){
+if($date_to !== ''){
     //will search for the end date of leave
-    $conditons = "lr.end_date <= ?";
-    $params[] = $end_date;
+    $conditions[] = "lr.end_date <= ?";
+    $params[] = $date_to;
     $types .= 's';
 }
 
 //get the conditions from above
 //checks if there is an active filter or coundtion, then pieces the active filter a user used
 //return null if nothing was used
-$where = $conditions ? "WHERE " . implode(" AND", $conditions): "";
+$where = $conditions ? "WHERE " . implode(" AND ", $conditions) : "";
 
 
 $sql = "

@@ -1,4 +1,5 @@
 <?php
+//ATTENDANCE IN THE ADMIN DASHBOARD
 session_start();
 
 header('Content-Type: application/json; charset=utf-8');
