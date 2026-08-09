@@ -69,12 +69,13 @@ $departments = $connection->query($department_sql);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leave Requests</title>
-
-    <link rel="stylesheet" href="../assets/css/leaveRequests.css">
  
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../assets/css/adminDashboard.css">
+    <link rel="stylesheet" href="../assets/css/leaveRequests.css">
 </head>
 <body>
    <header class="header">
@@ -93,7 +94,7 @@ $departments = $connection->query($department_sql);
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="#"> Attendance Records</a>
+                <a href="attendanceRecords.php"> Attendance Records</a>
             <?php endif; ?>
 
             <!-- Admin -->

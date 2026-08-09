@@ -54,8 +54,6 @@ while ($row = $attendance_result->fetch_assoc()) {
 
 $all_count = count($attendance_rows);
 
-$deparrtment_sql = "SELECT * FROM departments";
-$departments = $connection->query($deparrtment_sql);
 ?>
 
 <!DOCTYPE html>
@@ -93,7 +91,7 @@ $departments = $connection->query($deparrtment_sql);
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="#"> Attendance Records</a>
+                <a href="attendanceRecords.php"> Attendance Records</a>
             <?php endif; ?>
 
             <!-- Admin -->

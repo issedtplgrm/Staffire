@@ -61,6 +61,7 @@ $employees = $connection->query(
             <?php if (isRole("admin") || isRole("manager")): ?>
                 <a href="leaveRequests.php">Leave Requests</a>
             <?php endif; ?>
+
             <!-- Employee and Manager(?) -->
             <?php if (isRole("manager") || isRole("employee")): ?>
                 <a href="requestLeave.php">Request Leave</a>
@@ -68,7 +69,7 @@ $employees = $connection->query(
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="#"> Attendance Records</a>
+                <a href="attendanceRecords.php"> Attendance Records</a>
             <?php endif; ?>
 
             <!-- Admin -->
