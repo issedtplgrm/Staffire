@@ -99,6 +99,7 @@ $all_count = count($attendance_rows);
 
                 <a href="../pages/manageEmployees.php">Manage Employees</a>
             <?php endif; ?>
+            <span></span>
         </nav>
 
         <div class="header-items">

@@ -39,17 +39,43 @@ body {
 nav {
   display: flex;
   flex-wrap: wrap;
+  gap: 10px;
 }
 
 nav a {
   color: #fdfdfd;
-  font-size: clamp(16px, 2.5vw, 20px);
-  opacity: 0.89;
+  font-size: clamp(18px, 2.5vw, 23px);
+  opacity: 0.7;
   font-weight: 500;
-  margin: 10px 6px;
-  ;
+  position: relative;
+  padding: 10px 24px;
+  border: 2px solid transparent;
+  white-space: nowrap;
   text-decoration: none;
   text-shadow: 3px 3px 4px rgba(22, 22, 22, 0.4);
+  cursor: pointer;
+
+  transition: opacity 0.7s ease, color 0.7 ease;
+}
+
+nav a:hover{
+  color: #fdfdfd;
+  opacity: 1;
+}
+
+nav a::before{
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background-color: #fdfdfd;
+  transition: all .5s ease;
+}
+
+nav a:hover::before{
+  width: 100%;
 }
 
 .pfp {

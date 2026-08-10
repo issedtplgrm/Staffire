@@ -74,8 +74,8 @@ $departments = $connection->query("SELECT id, name FROM departments ORDER BY nam
     <link
         href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/adminDashboard.css">    
-    <link rel="stylesheet" href="/assets/css/attendanceRecords.css">
+    <link rel="stylesheet" href="../assets/css/adminDashboard.css">    
+    <link rel="stylesheet" href="../assets/css/attendanceRecords.css">
 </head>
 
 <body>
