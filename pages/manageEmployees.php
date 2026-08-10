@@ -34,7 +34,9 @@ $employees = $connection->query(
          LEFT JOIN departments d ON d.id = u.department_id
          ORDER BY u.full_name"
         );
-    ?>
+
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -56,26 +58,25 @@ $employees = $connection->query(
     <header class="header">
         <nav>
             <!-- All -->
-            <a href="dashboard.php">Home</a>
+            <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">Home</a>
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="leaveRequests.php">Leave Requests</a>
+                <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">Leave Requests</a>
             <?php endif; ?>
 
             <!-- Employee and Manager(?) -->
             <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="requestLeave.php">Request Leave</a>
+                <a href="requestLeave.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="attendanceRecords.php"> Attendance Records</a>
+                <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>"> Attendance Records</a>
             <?php endif; ?>
 
             <!-- Admin -->
             <?php if (isRole("admin")): ?>
-
-                <a href="../pages/manageEmployees.php">Manage Employees</a>
+                <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>">Manage Employees</a>
             <?php endif; ?>
         </nav>
         <div class="header-items">
