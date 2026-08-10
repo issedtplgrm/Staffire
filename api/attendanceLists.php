@@ -21,7 +21,7 @@ $date_from   = trim($_GET['date_from'] ?? '');
 $date_to     = trim($_GET['date_to'] ?? '');
 
 // containers
-$conditions = []; //where
+$conditions = ["u.role != 'admin'"]; //where
 $params = []; //value that will be put in '?'
 $types = ''; //s
 

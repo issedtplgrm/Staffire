@@ -12,12 +12,12 @@ if (!isset($_SESSION['id'])) {
 }
 
 $filter = $_GET['filter'] ?? 'all';
-$where = '';
+$where = "WHERE users.role != 'admin'";
 
 if ($filter === 'present') {
-    $where = "WHERE attendance.status  IS NOT NULL AND attendance.status != 'absent'";
+    $where .= "AND attendance.status  IS NOT NULL AND attendance.status != 'absent'";
 } elseif ($filter === 'absent') {
-    $where = "WHERE attendance.status  IS NULL OR attendance.status != 'absent'";
+    $where = "AND attendance.status  IS NULL AND attendance.status != 'absent'";
 }
 
 // same in dashboard

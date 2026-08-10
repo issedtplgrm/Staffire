@@ -52,7 +52,7 @@ if ($attendance_result->num_rows > 0) {
         VALUES (?, ?, ?, ?)
     ";
     $record_stmt = $connection->prepare($record_sql);
-    $record_stmt->bind_param("isss", $user_id, $time_in, $time_out, $status);
+    $record_stmt->bind_param("isss", $user_id, $login_time, $logout_time, $status);
     $record_stmt->execute();
 }
 
