@@ -383,7 +383,10 @@ tbody tr td {
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: #c7c9d9;
+  background-image: url(../img/avatar-icon.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
   flex-shrink: 0;
 }
 

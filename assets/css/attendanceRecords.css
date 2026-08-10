@@ -78,11 +78,14 @@
 }
 
 .ar-avatar {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    background: #c7c9d9;
-    flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-image: url(../img/avatar-icon.png);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: cover;
+  flex-shrink: 0;
 }
 
 .status-badge {
