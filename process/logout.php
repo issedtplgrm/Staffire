@@ -47,13 +47,13 @@ if ($attendance_result->num_rows > 0) {
     $time_out        = $time_out_data["logout_time"];
 
     //prototype save to perm attendance table
-    $record_sql = "
-        INSERT INTO attendance (user_id, login_time, logout_time, status)
-        VALUES (?, ?, ?, ?)
-    ";
-    $record_stmt = $connection->prepare($record_sql);
-    $record_stmt->bind_param("isss", $user_id, $time_in, $time_out, $status);
-    $record_stmt->execute();
+    // $record_sql = "
+    //     INSERT INTO attendance (user_id, login_time, logout_time, status)
+    //     VALUES (?, ?, ?, ?)
+    // ";
+    // $record_stmt = $connection->prepare($record_sql);
+    // $record_stmt->bind_param("isss", $user_id, $login_time, $logout_time, $status);
+    // $record_stmt->execute();
 }
 
 
