@@ -16,30 +16,8 @@ CREATE TABLE IF NOT EXISTS attendance (
     user_id INT NOT NULL,
     login_time DATETIME NOT NULL,
     logout_time DATETIME,
-    status ENUM('present','absent','late') DEFAULT 'present',
+    status ENUM('present','absent') DEFAULT 'present',
     FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-CREATE TABLE IF NOT EXISTS overtime_requests (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    date DATE NOT NULL,
-    hours DECIMAL(4,2) NOT NULL,
-    status ENUM('pending','approved','rejected') DEFAULT 'pending',
-    manager_id INT,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (manager_id) REFERENCES users(id)
-);
-
-CREATE TABLE IF NOT EXISTS overtime_requests (
-    id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT NOT NULL,
-    date DATE NOT NULL,
-    hours DECIMAL(4,2) NOT NULL,
-    status ENUM('pending','approved','rejected') DEFAULT 'pending',
-    manager_id INT,
-    FOREIGN KEY (user_id) REFERENCES users(id),
-    FOREIGN KEY (manager_id) REFERENCES users(id)
 );
 
 CREATE TABLE IF NOT EXISTS leave_requests (
