@@ -17,7 +17,7 @@ $where = "WHERE users.role != 'admin'";
 if ($filter === 'present') {
     $where .= "AND attendance.status  IS NOT NULL AND attendance.status != 'absent'";
 } elseif ($filter === 'absent') {
-    $where = "AND attendance.status  IS NULL AND attendance.status != 'absent'";
+    $where .= "AND attendance.status  IS NULL";
 }
 
 // same in dashboard

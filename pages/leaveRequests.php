@@ -9,6 +9,7 @@
     exit();
 }
 
+$where = "WHERE users.role != 'admin'";
 //added status of leave
 $attendance_sql = "
     SELECT
@@ -31,7 +32,9 @@ $attendance_sql = "
      LEFT JOIN leave_requests
         ON leave_requests.user_id = users.id
         AND leave_requests.status = 'approved'
+        
         AND CURDATE() BETWEEN leave_requests.start_date AND leave_requests.end_date
+        $where
     ORDER BY attendance.login_time DESC, users.full_name ASC
 ";
 
@@ -92,7 +95,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
             <!-- Employee and Manager(?) -->
             <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="requestLeave.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
+                <a href="leaveRequests.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
