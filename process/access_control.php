@@ -1,5 +1,9 @@
 <?php
 
+//get username
+function getUsername(): ?string {
+    return $_SESSION["username"] ?? null;
+}
 
 //get user_role
 function getRole()

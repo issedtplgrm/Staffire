@@ -57,6 +57,9 @@ $all_count = count($attendance_rows);
 
 //get the current page that is opened
 $current_page = basename($_SERVER['PHP_SELF']);
+
+//get name
+$username = getUsername();
 ?>
 
 <!DOCTYPE html>
@@ -104,8 +107,32 @@ $current_page = basename($_SERVER['PHP_SELF']);
         </nav>
 
         <div class="header-items">
-            <a href=""><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt=""></a>
-            <div class="pfp"></div>
+            <div><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()"></div>
+
+            <div class="pfp" onclick="showMenu()"></div>
+        </div>
+        <div class="notif-wrap" id="notifs">
+            <div class="notifs">
+                 <hr>
+                <div class="notif-card">  
+                <p>notifs</p>
+                </div>
+            </div>
+        </div>
+        <div class="pfp-menu-wrap" id="pfp-menu">
+            <div class="pfp-menu">
+                <div class="user-info">
+                    <h2><?php echo htmlspecialchars($username) ?></h2>
+                </div>
+                <hr>
+                <!-- <a href="#">IN CASE OF ADDING A NEW PAGE</a> -->
+                <form action="../process/logout.php">
+                    <button type="submit" class="logout-btn" href="../process/logout.php">
+                        <img src="../assets/img/logout-icon.png" class="logout-icon" alt="">
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>   
         </div>
     </header>
 
@@ -172,10 +199,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 </div>
 
                 <div id="leave-list"></div>
-                <form action="../process/logout.php">
+                <!-- <form action="../process/logout.php">
                     <button type="submit" class="logout-btn" href="../process/logout.php">Logout</button>
 
-                </form>
+                </form> -->
             </div>
 
             <!-- Attendance table -->

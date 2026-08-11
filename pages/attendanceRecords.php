@@ -62,6 +62,9 @@ $departments = $connection->query("SELECT id, name FROM departments ORDER BY nam
 
 //get the current page that is opened
 $current_page = basename($_SERVER['PHP_SELF']);
+
+//getnmae
+$username = getUsername();
 ?>
 
 <!DOCTYPE html>
@@ -93,7 +96,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
             <!-- Employee and Manager(?) -->
             <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="requestLeave.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
+                <a href="leaveRequests.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
@@ -106,9 +109,34 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>">Manage Employees</a>
             <?php endif; ?>
         </nav>
+
         <div class="header-items">
-            <a href=""><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt=""></a>
-            <div class="pfp"></div>
+            <div><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()"></div>
+
+            <div class="pfp" onclick="showMenu()"></div>
+        </div>
+        <div class="notif-wrap" id="notifs">
+            <div class="notifs">
+                 <hr>
+                <div class="notif-card">  
+                <p>notifs</p>
+                </div>
+            </div>
+        </div>
+        <div class="pfp-menu-wrap" id="pfp-menu">
+            <div class="pfp-menu">
+                <div class="user-info">
+                    <h2><?php echo htmlspecialchars($username) ?></h2>
+                </div>
+                <hr>
+                <!-- <a href="#">IN CASE OF ADDING A NEW PAGE</a> -->
+                <form action="../process/logout.php">
+                    <button type="submit" class="logout-btn" href="../process/logout.php">
+                        <img src="../assets/img/logout-icon.png" class="logout-icon" alt="">
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>   
         </div>
     </header>
 
