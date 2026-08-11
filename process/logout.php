@@ -48,7 +48,7 @@ if ($attendance_result->num_rows > 0) {
 
     //prototype save to perm attendance table
     $record_sql = "
-        INSERT INTO attendance_records (user_id, time_in, time_out, status)
+        INSERT INTO attendance (user_id, login_time, logout_time, status)
         VALUES (?, ?, ?, ?)
     ";
     $record_stmt = $connection->prepare($record_sql);

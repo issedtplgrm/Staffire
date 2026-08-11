@@ -258,27 +258,39 @@ body {
 }
 
 .time-card{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     width: 100%;
+}
+
+.time-card-item{
+    display: flex;
     align-items: center;
-    padding:18px 20px;  
+    justify-content: space-between;
     background:rgba(255,255,255,.05);
     border:1px solid rgba(255,255,255,.05);
-    border-radius:16px;
-    margin-bottom:16px;
+    gap: 10px;
+    padding: 18px 16px;
+    border-radius: 16px;
 }
 
 .employee-name{
     color:white;
-    font-size: clamp(.9rem,1vw,1rem);
-    font-weight:600;
+    font-size: clamp(.9rem, 1vw, 1rem);
+    font-weight:700;
+    flex: 1;
 }
 
 .time-column{
     display:flex;
     flex-direction:column;
-    align-items:flex-start;
+    align-items:center;
+    min-width: 90px;
+}
+
+.time-column:last-child{
+    align-items: flex-end;
 }
 
 .column-title{

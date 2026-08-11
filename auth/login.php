@@ -30,7 +30,7 @@ session_start(); //for validation
 
             <div class="time-card">
 
-                <div class="employee-name">
+                <!-- <div class="employee-name">
                     Iced Pilgrim
                 </div>
 
@@ -42,7 +42,7 @@ session_start(); //for validation
                 <div class="time-column">
                     <span class="column-title">Status</span>
                     <span class="status">Present</span>
-                </div>
+                </div> -->
 
             </div>
         </section>
@@ -60,12 +60,12 @@ session_start(); //for validation
                 }
                 ?>
             <div class="field-group">
-                <input type="text" id="email" placeholder=" " name="email" required>
+                <input type="text" id="email" placeholder=" " name="email" autocomplete="username" required>
                 <label for="email">Email</label>
             </div>
 
             <div class="field-group">
-                <input type="password" id="password" placeholder=" " name="password" required>
+                <input type="password" id="password" placeholder=" " name="password" autocomplete="current-password" required>
                 <label for="password">Password</label>
             </div>
 

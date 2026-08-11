@@ -180,7 +180,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <!-- Attendance table -->
             <div class="panel">
                 <div class="attendance-header">
-                    <h3>Attendance for <?= date("d/m/Y") ?></h3>
+                    <h3>Attendance for <?= date(" l - F d Y") ?></h3>
                     <span class="see-more">See More</span>
                 </div>
 
