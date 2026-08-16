@@ -15,6 +15,7 @@ $attendance_sql = "
         CASE
             WHEN leave_requests.user_id IS NOT NULL THEN 'on leave'
             WHEN attendance.id IS NULL THEN 'absent'
+            WHEN TIME(NOW()) > '09:15:00' THEN 'late'
             ELSE attendance.status
         END AS status
     FROM users
@@ -37,6 +38,7 @@ $attendance_result = $connection->query($attendance_sql);
 $attendance_rows = [];
 $present_count = 0;
 $absent_count = 0;
+$late_count = 0; //late
 $leave_req = 0;
 $on_leave = 0;
 
@@ -45,9 +47,13 @@ while ($row = $attendance_result->fetch_assoc()) {
     $attendance_rows[] = $row;
 
     if($row["leave_status"] === 'approved'){
-        $on_leave++;
+        $on_leave++
+        ;
     } else if ($row["status"] === "absent") {
-        $absent_count++;
+        $absent_count++; }
+    else if ($row["status"] === "late") {   // late condition
+        $late_count++;
+        $present_count++;
     } else {
         $present_count++;
     } 
@@ -72,6 +78,8 @@ $username = getUsername();
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+
 
     <link
         href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
@@ -91,8 +99,8 @@ $username = getUsername();
             <?php endif; ?>
 
             <!-- Employee and Manager(?) -->
-            <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
+            <?php if (isRole("manager")): ?>
+                <a href="../pages/request-leave.php" class="<?= $current_page === 'request-leave.php' ? 'active' : '' ?>">Request Leave</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
@@ -111,6 +119,8 @@ $username = getUsername();
 
             <div class="pfp" onclick="showMenu()"></div>
         </div>
+
+    
         <div class="notif-wrap" id="notifs">
             <div class="notifs">
                  <hr>
@@ -119,6 +129,7 @@ $username = getUsername();
                 </div>
             </div>
         </div>
+
         <div class="pfp-menu-wrap" id="pfp-menu">
             <div class="pfp-menu">
                 <div class="user-info">
@@ -208,8 +219,13 @@ $username = getUsername();
             <!-- Attendance table -->
             <div class="panel">
                 <div class="attendance-header">
-                    <h3>Attendance for <?= date(" l - F d Y") ?></h3>
-                    <span class="see-more">See More</span>
+                    <!-- replaced with real-tim clock.js, replaced "button tag of "SEE MORE" to 'a' tag-->
+                    <h3>Attendance for <span id="clock"></span> </h3>
+                    <h3>Shift 9:00 AM - 5:00 PM    <a class="see-more" href="../pages/attendanceRecords.php">See More</a> </h3>
+                   
+                    
+
+                  
                 </div>
 
                 <div class="filters">
@@ -223,6 +239,10 @@ $username = getUsername();
 
                     <button class="filter-btn" data-filter="absent">
                         Absent (<?= $absent_count ?>)
+                    </button>
+                    <!-- late button -->
+                    <button class="filter-btn" data-filter="late">
+                        Late (<?= $late_count ?>)  
                     </button>
                 </div>
                 <div class="table-scroll">
@@ -244,6 +264,15 @@ $username = getUsername();
     </main>
 
     <script src="../assets/js/admindashboard.js"></script>
+    <script src="../assets/js/clock.js"></script>
+    <script src="../assets/js/overTime.js"></script>
+    <!-- if admin exclude in OT -->
+    <script>
+    const userRole = "<?php echo $_SESSION['role']; ?>";
+</script>
+
+
+
 </body>
 
 </html>

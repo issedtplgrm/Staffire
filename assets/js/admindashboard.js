@@ -137,3 +137,56 @@ function showNotifs(){
     notifs.classList.toggle("open-notif");
 }
 
+//manager request
+
+
+const request=document.getElementById("request");
+const leaveTab=document.getElementById("tab-leave");
+const overtimeTab=document.getElementById("tab-overtime");
+const leaveForm=document.getElementById("leave-form-section");
+const overtimeForm=document.getElementById("overtime-form-section");
+const overtimeStart=document.getElementById("overtime_start");
+const overtimeEnd=document.getElementById("overtime_end");
+const totalHours=document.getElementById("total_hours");
+
+function showRequest(){request.classList.add("show")}
+function hideRequest(){request.classList.remove("show")}
+
+leaveTab.onclick=()=>{
+    leaveTab.classList.add("active");
+    overtimeTab.classList.remove("active");
+    leaveForm.classList.remove("hidden");
+    overtimeForm.classList.add("hidden");
+};
+
+overtimeTab.onclick=()=>{
+    overtimeTab.classList.add("active");
+    leaveTab.classList.remove("active");
+    overtimeForm.classList.remove("hidden");
+    leaveForm.classList.add("hidden");
+};
+
+function calculateOvertime(){
+    if(!overtimeStart.value||!overtimeEnd.value){
+        totalHours.value="--:--";
+        return;
+    }
+
+    const start=new Date(`1970-01-01T${overtimeStart.value}`);
+    const end=new Date(`1970-01-01T${overtimeEnd.value}`);
+
+    if(end<=start){
+        totalHours.value="--:--";
+        return;
+    }
+
+    const minutes=(end-start)/60000;
+    totalHours.value=`${String(Math.floor(minutes/60)).padStart(2,"0")}h ${String(minutes%60).padStart(2,"0")}m`;
+}
+
+overtimeStart.onchange=calculateOvertime;
+overtimeEnd.onchange=calculateOvertime;
+
+request.onclick=e=>{
+    if(e.target===request) hideRequest();
+};

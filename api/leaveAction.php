@@ -21,6 +21,39 @@ if ($id === 0 || !in_array($action, ['approve', 'reject'], true)) {
     exit();
 }
 
+
+if ($_SESSION['role'] === 'manager') {
+
+    $check_stmt = $connection->prepare(
+        "SELECT users.id, users.role
+         FROM leave_requests
+         INNER JOIN users ON leave_requests.user_id = users.id
+         WHERE leave_requests.id = ?"
+    );
+
+    $check_stmt->bind_param("i", $id);
+    $check_stmt->execute();
+
+    $check_result = $check_stmt->get_result();
+
+    if ($check_result->num_rows === 0) {
+        http_response_code(404);
+        echo json_encode(['error' => 'Leave request not found.']);
+        exit();
+    }
+
+    $request_user = $check_result->fetch_assoc();
+
+    // Managers cannot approve/reject manager requests
+    if ($request_user['role'] === 'manager') {
+        http_response_code(403);
+        echo json_encode([
+            'error' => 'Managers cannot approve or reject manager leave requests.'
+        ]);
+        exit();
+    }
+}
+
 $status = ($action === 'approve') ? 'approved' : 'rejected';
 $manager_id = $_SESSION['id']; // whoever's logged in and clicked the button
 
@@ -38,3 +71,4 @@ if ($stmt->execute()) {
 exit();
 
 ?>
+

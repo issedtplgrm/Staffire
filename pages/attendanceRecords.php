@@ -19,7 +19,7 @@ $attendance_sql = "
         CASE
             WHEN leave_requests.user_id IS NOT NULL THEN 'on leave'
             WHEN attendance.id IS NULL THEN 'absent'
-            ELSE attendance.status
+            ELSE 'present'
         END AS status
     FROM users
     LEFT JOIN attendance

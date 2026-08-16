@@ -77,3 +77,42 @@ insert into leave_requests (user_id, start_date, end_date, type, status, manager
 
 select * from leave_requests;
 
+-- late
+ALTER TABLE attendance 
+MODIFY status ENUM('present','absent','late') DEFAULT 'present';
+
+-- month present absent
+CREATE TABLE IF NOT EXISTS monthlyAttendance(
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    present_count INT,
+    absent_count INT,
+    leave_count INT,
+    user_id INT NOT NULL,
+    attendance_month DATE NOT NULL, 
+    last_counted_date DATE NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+);
+
+CREATE TABLE IF NOT EXISTS overtime_requests (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    overtime_date DATE NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    total_hours DECIMAL(5,2) NOT NULL, -- store hours as numeric (e.g., 3.50)
+    overtime_type ENUM('regular','emergency') DEFAULT 'regular',
+    reason VARCHAR(300) NOT NULL,
+    work VARCHAR(300) DEFAULT NULL,
+    status ENUM('pending','approved','rejected') DEFAULT 'pending',
+    manager_id INT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (manager_id) REFERENCES users(id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+ALTER TABLE leave_requests 
+    ADD COLUMN submitted_by_role ENUM('employee','manager','admin') NOT NULL DEFAULT 'employee';
+
+ALTER TABLE overtime_requests 
+    ADD COLUMN submitted_by_role ENUM('employee','manager','admin') NOT NULL DEFAULT 'employee';
+
