@@ -56,7 +56,7 @@ if ($request_type === 'overtime') {
 if ($user_role === 'employee') {
     header("Location: ../pages/empDashboard.php");
 //if admin/manager
-} elseif ($user_role === 'admin') {
+} elseif ($user_role === 'manager') {
     header("Location: ../pages/dashboard.php");
 }
 exit();

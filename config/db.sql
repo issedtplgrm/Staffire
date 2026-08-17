@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS staffire;
-
+ Use Staffire;
 -- chavez bakla
 CREATE TABLE IF NOT EXISTS users (
     id INT PRIMARY KEY AUTO_INCREMENT,

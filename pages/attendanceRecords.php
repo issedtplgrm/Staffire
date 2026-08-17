@@ -96,7 +96,7 @@ $username = getUsername();
 
             <!-- Employee and Manager(?) -->
             <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
+                <a href="request-leave.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->

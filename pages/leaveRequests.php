@@ -104,7 +104,7 @@ $user_id = $_SESSION['id'];
 
             <!-- Employee and Manager(?) -->
             <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
+                <a href="request-leave.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
@@ -252,8 +252,64 @@ $user_id = $_SESSION['id'];
                 </tbody>
             </table>
         </div>
+
+        <!-- HERE -->
+        <!-- Overtime Requests -->
+<div class="lr-table-wrap">
+    <div class="lr-toolbar">
+        <h3>Overtime Requests</h3>
+
+        <input type="text" id="ot-search" class="lr-search" placeholder="Search Employee Name...">
+
+        <select id="ot-department" class="lr-select">
+            <option value="all">All Departments</option>
+            <?php while ($d = $departments->fetch_assoc()): ?>
+                <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
+            <?php endwhile; ?>
+        </select>
+
+        <select id="ot-status" class="lr-select">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+
+        <input type="date" id="ot-date-from" class="lr-date">
+        <input type="date" id="ot-date-to" class="lr-date">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Overtime Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Total Hours</th>
+                <th>Type</th>
+                <th>Reason</th>
+                <th>Work</th>
+                <th>Status</th>
+                <th>Submitted On</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody
+            id="ot-table-body"
+            data-user-role="<?= htmlspecialchars($user_role) ?>"
+            data-user-id="<?= htmlspecialchars($user_id) ?>">
+        </tbody>
+    </table>
+</div>
+
+
     </main>
 
     <script src="../assets/js/leaveRequests.js"></script>
+    <script src="../assets/js/overtimeRequest.js"></script>
+
 </body>
 </html>
