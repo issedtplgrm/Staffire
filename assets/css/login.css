@@ -3,7 +3,7 @@
   --bg-color: #0b0f19;
   --line-color: rgba(255, 255, 255, 0.04);
   --glow-color: rgba(200, 14, 85, 0.6);
-  --surface: rgba(18, 22, 38, 0.65);
+  --surface: rgba(18, 19, 26, .92);
 }
 
 html,
@@ -67,7 +67,8 @@ body {
   display: flex;
   overflow: hidden;
 
-  background: var(--surface);
+  /* background: var(--surface); */
+  background: rgba(18, 19, 26, .92);
 
   backdrop-filter: blur(25px);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -106,12 +107,14 @@ body {
     rgba(41,47,96,.45),
     rgba(18,20,45,.15)
    ); */
-  background: linear-gradient(135deg,
-      #343d9d 0%,
-      #232963 25%,
-      #181d4b 60%,
-      #11152f 100%);
-
+background:
+    radial-gradient(circle at 20% 20%,
+      rgba(232, 61, 143, .25),
+      transparent 35%),
+    linear-gradient(135deg,
+      #24101c,
+      #130d16 55%,
+      #0b0c12);
 }
 
 .right-panel {
@@ -126,7 +129,8 @@ body {
 }
 
 .right-panel form {
-  width: (100%, 340px);
+  width: 100%;
+  max-width: 420px;
 }
 
 .left-panel,
@@ -147,7 +151,7 @@ body {
   padding: 14px 12px;
   font-size: clamp(0.9rem, .95vw, 1rem);
   color: #f4f4f4;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--surface);
   border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.15);
   outline: none;

@@ -81,7 +81,10 @@ $username = getUsername();
 </head>
 
 <body>
-    <header class="header">
+    <sidebar class="sidebar">
+        <div class="sidebar-brand">
+            <span>STAFF</span>IRE
+        </div>
         <nav>
             <!-- All -->
             <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">Home</a>
@@ -106,11 +109,29 @@ $username = getUsername();
             <?php endif; ?>
         </nav>
 
-        <div class="header-items">
-            <div><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()"></div>
+    </sidebar>
 
-            <div class="pfp" onclick="showMenu()"></div>
+      <!-- replace old header with sidebar, add new header in main cont--top header--put header items  -->
+    <main class="main-cont">
+      <header class="top-header">
+        <div class="header-items">
+            <!-- left part -->
+            <div> 
+                <h1>Welcome, <span><?php echo htmlspecialchars($username) ?>!</span></h1>
+            </div>
+            <!-- righth part -->
+            <div class="header-items-right">
+                <div>
+                    <img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()">
+                </div>
+                <div class="user">
+                    <div class="pfp" onclick="showMenu()"></div>
+                    <p><?php echo htmlspecialchars($username) ?></p>
+                </div>
+            </div>    
         </div>
+    </header>
+         <!-- notif-->
         <div class="notif-wrap" id="notifs">
             <div class="notifs">
                  <hr>
@@ -118,7 +139,8 @@ $username = getUsername();
                 <p>notifs</p>
                 </div>
             </div>
-        </div>
+        </div>        
+        <!-- pfp -->
         <div class="pfp-menu-wrap" id="pfp-menu">
             <div class="pfp-menu">
                 <div class="user-info">
@@ -134,9 +156,7 @@ $username = getUsername();
                 </form>
             </div>   
         </div>
-    </header>
-
-    <main class="main-cont">
+        <!-- hanngang dito copy -->
         <section class="stats">
 
             <!-- Statistics cards -->

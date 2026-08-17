@@ -74,7 +74,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </header>
 
     <main class="main-cont">
-        <h2>Good Day! Welcome to Staffire, </h2>
+        <h2>Good Day, username, Welcome to Staffire! </h2>
         <!-- stat cards -->
         <section class="stats">
             <div class="stat-card">
@@ -155,8 +155,9 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </div> 
                      <button type="submit" class="submit-btn">Submit Leave Request</button>
                 </form>
+
                 <!-- overtime request form -->
-                <!-- <form id="overtime-form-section" class="request-form hidden" onsubmit="return false;">
+                <form id="overtime-form-section" class="request-form hidden" onsubmit="return false;">
                     <label for="overtime_date">Date of Overtime</label>
                         <input type="date" name="overtime_date" id="overtime_date">
                     <div class="date-row">
@@ -171,20 +172,14 @@ $current_page = basename($_SERVER['PHP_SELF']);
                     </div>
                      <label for="total_hours">Total Hours</label>
                         <input type="text" name="total_hours" id="total_hours" placeholder="4h 00m" readonly>
-                            <label>Type of Overtime</label>
-                    <div class="overtime-type-row">
-                            <label class="overtime-type-option">
-                                <input type="radio" name="overtime_type" value="regular" checked> Regular Overtime </label>
-                            <label class="overtime-type-option"></label> 
-                            <input type="radio" name="overtime_type" value="emergency"> Emergency Overtime </label>
-                    </div> 
+
                             <label for="overtime_reason">Reason for Overtime</label>
                                 <textarea name="overtime_reason" id="overtime_reason" maxlength="300" placeholder="Provide a detailed reason for your overtime request."></textarea>
                             <label for="overtime_work">Work to be Accomplished (Optional)</label>
                                <textarea name="overtime_work" id="overtime_work" maxlength="300" placeholder="Describe tasks or work you will be handling during this overtime."></textarea>
                             
-                            <button type="submit" class="submit-btn" disabled title="Overtime requests aren't wired up yet">Submit Overtime Request</button>
-                </form> -->
+                            <button type="submit" class="submit-btn"  title="Overtime requests aren't wired up yet">Submit Overtime Request</button>
+                </form>
             </div>
              <!-- RIGHT PANEL: Attendance Today -->
             <div class="panel">
@@ -258,6 +253,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     </main>
 
     <script src="../assets/js/admindashboard.js"></script>
+    <script src="../assets/js/empdashboard.js"></script>
 </body>
 
 </html>

@@ -1,10 +1,10 @@
 <?php
-    require_once __DIR__ . '/../config/db.php';
-    require_once __DIR__ . '/../process/access_control.php';
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../process/access_control.php';
 
-    session_start();
-    //check if a user is logged in
-    if (!isset($_SESSION['id'])) {
+session_start();
+//check if a user is logged in
+if (!isset($_SESSION['id'])) {
     header("Location: ../auth/login.php");
     exit();
 }
@@ -51,13 +51,13 @@ $on_leave = 0;
 while ($row = $attendance_result->fetch_assoc()) {
     $attendance_rows[] = $row;
 
-    if($row["leave_status"] === 'approved'){
+    if ($row["leave_status"] === 'approved') {
         $on_leave++;
     } else if ($row["status"] === "absent") {
         $absent_count++;
     } else {
         $present_count++;
-    } 
+    }
 }
 
 $all_count = count($attendance_rows);
@@ -70,15 +70,16 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 //get name
 $username = getUsername();
- ?>
+?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Leave Requests</title>
- 
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -86,8 +87,12 @@ $username = getUsername();
     <link rel="stylesheet" href="../assets/css/adminDashboard.css">
     <link rel="stylesheet" href="../assets/css/leaveRequests.css">
 </head>
+
 <body>
-   <header class="header">
+    <sidebar class="sidebar">
+        <div class="sidebar-brand">
+            <span>STAFF</span>IRE
+        </div>
         <nav>
             <!-- All -->
             <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">Home</a>
@@ -112,19 +117,38 @@ $username = getUsername();
             <?php endif; ?>
         </nav>
 
-        <div class="header-items">
-            <div><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()"></div>
+    </sidebar>
 
-            <div class="pfp" onclick="showMenu()"></div>
-        </div>
+    <!-- replace old header with sidebar, add new header in main cont--top header--put header items  -->
+    <main class="main-cont">
+        <header class="top-header">
+            <div class="header-items">
+                <!-- left part -->
+                <div>
+                    <h1>Welcome, <span><?php echo htmlspecialchars($username) ?>!</span></h1>
+                </div>
+                <!-- righth part -->
+                <div class="header-items-right">
+                    <div>
+                        <img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()">
+                    </div>
+                    <div class="user">
+                        <div class="pfp" onclick="showMenu()"></div>
+                        <p><?php echo htmlspecialchars($username) ?></p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- notif-->
         <div class="notif-wrap" id="notifs">
             <div class="notifs">
-                 <hr>
-                <div class="notif-card">  
-                <p>notifs</p>
+                <hr>
+                <div class="notif-card">
+                    <p>notifs</p>
                 </div>
             </div>
         </div>
+        <!-- pfp -->
         <div class="pfp-menu-wrap" id="pfp-menu">
             <div class="pfp-menu">
                 <div class="user-info">
@@ -138,11 +162,8 @@ $username = getUsername();
                         <span>Logout</span>
                     </button>
                 </form>
-            </div>   
+            </div>
         </div>
-    </header>
-
-    <main class="main-cont">
         <section class="stats">
 
             <!-- Statistics cards -->
@@ -195,30 +216,30 @@ $username = getUsername();
             </div>
         </section>
 
-        <div class="lr-table-wrap">
+        <div class="panel">
             <div class="lr-toolbar">
                 <h3>Leave Requests</h3>
- 
+
                 <input type="text" id="lr-search" class="lr-search" placeholder="Search Employee Name...">
- 
+
                 <select id="lr-department" class="lr-select">
                     <option value="all">All Departments</option>
                     <?php while ($d = $departments->fetch_assoc()): ?>
                         <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
                     <?php endwhile; ?>
                 </select>
- 
+
                 <select id="lr-status" class="lr-select">
                     <option value="all">All Statuses</option>
                     <option value="pending">Pending</option>
                     <option value="approved">Approved</option>
                     <option value="rejected">Rejected</option>
                 </select>
- 
+
                 <input type="date" id="lr-date-from" class="lr-date">
                 <input type="date" id="lr-date-to" class="lr-date">
             </div>
- 
+
             <table>
                 <thead>
                     <tr>
@@ -239,4 +260,5 @@ $username = getUsername();
     </main>
     <script src="../assets/js/leaveRequests.js"></script>
 </body>
+
 </html>

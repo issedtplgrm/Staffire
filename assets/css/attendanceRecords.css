@@ -28,7 +28,8 @@
 }
 
 .ar-table-wrap {
-    margin: 24px;
+    width: 100%;
+    margin: 0 0 clamp(16px, 2vw, 24px);
     background: var(--panel);
     border-radius: 14px;
     padding: 20px;
@@ -97,16 +98,16 @@
 }
 
 .status-present {
-    background: #16412c;
-    color: #9de8bb;
+    background: rgba(61, 214, 140, 0.12);
+    color: #78e6a9;
 }
 
 .status-absent {
-    background: #4a1b1b;
-    color: #ffb3b3;
+    background: rgba(255, 83, 83, 0.12);
+    color: #ff8585;
 }
 
 .status-late {
-    background: #4a3418;
-    color: #f0b25c;
+    background: rgba(255, 184, 77, 0.12);
+    color: #ffbf69;
 }

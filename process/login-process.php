@@ -94,10 +94,6 @@ $_SESSION["role"] = $users["role"];
 
 $user_id = $users["id"];
 
-
-
-
-
 // Create attendance only if the logged-in user is NOT an admin
 if ($users["role"] != "admin") {
 
