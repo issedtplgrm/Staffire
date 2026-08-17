@@ -887,3 +887,45 @@ tbody tr td {
     width: 100%;
   }
 }
+/* for managers can be temporary */
+
+ .request-wrap {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(0,0,0,.35);
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 80px;
+}
+
+.request-wrap.show {
+    display: flex;
+}
+
+.request-card {
+    width: 500px;
+    max-width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,.2);
+}
+
+.close-request {
+    border: 0;
+    background: none;
+    font-size: 28px;
+    cursor: pointer;
+    float: right;
+}
+
+.request-btn {
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font: inherit;
+}

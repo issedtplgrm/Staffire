@@ -12,7 +12,7 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
-$sql= "SELECT
+$leave_sql= "SELECT
     lr.id as leave_request_id,
     lr.user_id,
     lr.start_date,
@@ -28,12 +28,13 @@ LEFT JOIN departments d ON u.department_id = d.id
 WHERE lr.status = 'pending'
 ";
 
-$result = $connection->query($sql);
+$result = $connection->query($leave_sql);
 
 // saves the result in an array
 $leave_requests = $result->fetch_all(MYSQLI_ASSOC);
 
 //then converts the array into json and sends it to the client
 echo json_encode($leave_requests);
-    
-?>
+
+
+    ?>
