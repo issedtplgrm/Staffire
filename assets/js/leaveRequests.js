@@ -98,6 +98,7 @@ async function handleAction(id, action) {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
             body: new URLSearchParams({ id: id, action: action })
+            
         });
 
         const result = await response.json();
@@ -145,5 +146,4 @@ function showNotifs(){
     pfpMenu.classList.remove("open-menu")
     notifs.classList.toggle("open-notif");
 }
-
 

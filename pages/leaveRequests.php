@@ -10,7 +10,8 @@ if (!isset($_SESSION['id'])) {
 }
 
 $where = "WHERE users.role != 'admin'";
-//added status of leave
+
+//added status of leave, April 16 - changed attendance.status to 'present'
 $attendance_sql = "
     SELECT
         users.full_name,
@@ -21,7 +22,7 @@ $attendance_sql = "
         CASE
             WHEN leave_requests.user_id IS NOT NULL THEN 'on leave'
             WHEN attendance.id IS NULL THEN 'absent'
-            ELSE attendance.status
+            ELSE 'present'
         END AS status
     FROM users
     LEFT JOIN attendance
@@ -55,7 +56,7 @@ while ($row = $attendance_result->fetch_assoc()) {
         $on_leave++;
     } else if ($row["status"] === "absent") {
         $absent_count++;
-    } else {
+    } else if ($row["status"] === "present"){
         $present_count++;
     }
 }
@@ -70,6 +71,10 @@ $current_page = basename($_SERVER['PHP_SELF']);
 
 //get name
 $username = getUsername();
+
+//get current user's role
+$user_role = $_SESSION['role'];
+$user_id = $_SESSION['id'];
 ?>
 
 <!DOCTYPE html>
@@ -96,6 +101,7 @@ $username = getUsername();
         <nav>
             <!-- All -->
             <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">Home</a>
+
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
                 <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">Leave Requests</a>
@@ -103,7 +109,7 @@ $username = getUsername();
 
             <!-- Employee and Manager(?) -->
             <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
+                <a href="request-leave.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
@@ -140,6 +146,12 @@ $username = getUsername();
             </div>
         </header>
         <!-- notif-->
+        <div class="header-items">
+            <div><img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()"></div>
+
+            <div class="pfp" onclick="showMenu()"></div>
+        </div>
+
         <div class="notif-wrap" id="notifs">
             <div class="notifs">
                 <hr>
@@ -154,8 +166,11 @@ $username = getUsername();
                 <div class="user-info">
                     <h2><?php echo htmlspecialchars($username) ?></h2>
                 </div>
+
                 <hr>
+
                 <!-- <a href="#">IN CASE OF ADDING A NEW PAGE</a> -->
+
                 <form action="../process/logout.php">
                     <button type="submit" class="logout-btn" href="../process/logout.php">
                         <img src="../assets/img/logout-icon.png" class="logout-icon" alt="">
@@ -220,7 +235,9 @@ $username = getUsername();
             <div class="lr-toolbar">
                 <h3>Leave Requests</h3>
 
+
                 <input type="text" id="lr-search" class="lr-search" placeholder="Search Employee Name...">
+
 
                 <select id="lr-department" class="lr-select">
                     <option value="all">All Departments</option>
@@ -254,11 +271,73 @@ $username = getUsername();
                         <th>Action</th>
                     </tr>
                 </thead>
-                <tbody id="lr-table-body"></tbody>
+
+                <tbody
+                    id="lr-table-body"
+                    data-user-role="<?= htmlspecialchars($user_role) ?>"
+                    data-user-id="<?= htmlspecialchars($user_id) ?>">
+                </tbody>
             </table>
         </div>
+
+        <!-- HERE -->
+        <!-- Overtime Requests -->
+<div class="lr-table-wrap">
+    <div class="lr-toolbar">
+        <h3>Overtime Requests</h3>
+
+        <input type="text" id="ot-search" class="lr-search" placeholder="Search Employee Name...">
+
+        <select id="ot-department" class="lr-select">
+            <option value="all">All Departments</option>
+            <?php while ($d = $departments->fetch_assoc()): ?>
+                <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
+            <?php endwhile; ?>
+        </select>
+
+        <select id="ot-status" class="lr-select">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+
+        <input type="date" id="ot-date-from" class="lr-date">
+        <input type="date" id="ot-date-to" class="lr-date">
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Department</th>
+                <th>Overtime Date</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Total Hours</th>
+                <th>Type</th>
+                <th>Reason</th>
+                <th>Work</th>
+                <th>Status</th>
+                <th>Submitted On</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody
+            id="ot-table-body"
+            data-user-role="<?= htmlspecialchars($user_role) ?>"
+            data-user-id="<?= htmlspecialchars($user_id) ?>">
+        </tbody>
+    </table>
+</div>
+
+
     </main>
+
     <script src="../assets/js/leaveRequests.js"></script>
+    <script src="../assets/js/overtimeRequest.js"></script>
+
 </body>
 
 </html>
