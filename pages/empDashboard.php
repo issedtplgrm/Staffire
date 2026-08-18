@@ -167,7 +167,7 @@ $monthly_leave = (int)$monthly['leave_count'];
 
         <!-- Requst Status -->
         <div class="sidebar-section">
-            <h4>My Leave</h4>
+            <h4>My Leave Requests</h4>
             <br>
             <ul class="req-list">
                 <?php while ($row = $leaveResult->fetch_assoc()): ?>
@@ -180,7 +180,7 @@ $monthly_leave = (int)$monthly['leave_count'];
                 <?php endwhile; ?>
             </ul>
 
-            <h4>My Overtime</h4>
+            <h4>My Overtime Requests</h4>
             <br>
             <ul class="req-list">
                 <?php while ($row = $otResult->fetch_assoc()): ?>
@@ -226,7 +226,7 @@ $monthly_leave = (int)$monthly['leave_count'];
                 <hr>
                 <div class="notif-card">
                      <div class="notif-list" id="notif-list"></div>
-                    > 
+                    
                     <!-- POSSIBLE -->
                 </div>
             </div>
@@ -376,89 +376,97 @@ $monthly_leave = (int)$monthly['leave_count'];
             </div>
 
             <!-- RIGHT PANEL: Attendance Today -->
-            <div>
-                <div class="panel">
-                    <div class="attendance-header">
-                        <h3>Attendance Today</h3>
-                        <span class="status-pill"><?= htmlspecialchars(ucfirst($display_status)) ?></span>
-                    </div>
+             <div class="panel">
 
-                    <div class="today-timeline">
-                        <div class="time-point">
-                            <div class="time-in-icon-cont">
-                                <img src="../assets/img/timeIn-icon.png" class="time-in-icon" alt="Time In">
-                            </div>
-                            <div>
-                                <p class="time-label">Time In</p>
-                                <p class="time-value"><?= htmlspecialchars($display_time_in) ?></p>
-                            </div>
-                        </div>
-
-                        <div class="time-line"></div>
-
-                        <div class="time-point">
-                            <div class="time-out-icon-cont">
-                                <img src="../assets/img/timeOut-icon.png" class="time-out-icon" alt="Time Out">
-                            </div>
-                            <div>
-                                <p class="time-label">Time Out</p>
-                                <p class="time-value"><?= htmlspecialchars($display_time_out) ?></p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="hours-row">
-                        <div>
-                            <p class="hours-label">Working Hours</p>
-                            <p>8 hours per day</p>
-                        </div>
-                        <div>
-                            <p class="hours-label">Break Time</p>
-                            <p>12 NN - 1 PM</p>
-                        </div>
-                        <div>
-                            <p class="hours-label">Overtime</p>
-                            <p class="hours-value" id="overtime">--</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="guidelines-box" id="guidelines-leave">
-                    <p class="guidelines-title">Leave Request Guidelines</p>
-                    <ul>
-                        <li>File your leave request in advance before your intended leave date.</li>
-                        <li>Provide accurate details and enter the correct information.</li>
-                        <li>Your request must be reviewed and approved by the manager.</li>
-                    </ul>
-                </div>
-
-                <div class="guidelines-box hidden" id="guidelines-overtime">
-                    <p class="guidelines-title">Overtime Request Guidelines</p>
-                    <ul>
-                        <li>Overtime must be approved by the administrator.</li>
-                        <li>Submit your request at least a day in advance.</li>
-                        <li>Overtime will be compensated based on company policy.</li>
-                        <li>Ensure your overtime work is necessary and justified.</li>
-                    </ul>
-                </div>
-
-                <div class="note-box" id="note-leave">
-                    <p class="note-title">Note</p>
-                    <p>Your leave request will be reviewed by the administrator. Please wait for the approval before considering your leave officially approved.</p>
-                </div>
-
-                <div class="note-box hidden" id="note-overtime">
-                    <p class="note-title">Note</p>
-                    <p>Overtime will be compensated based on company policy and subject to approval.</p>
-                </div>
-
-                <div class="lr-table-wrap">
-                </div>
+            <div class="attendance-header">
+                <h3>Attendance Today</h3>
+                <span class="status-pill" id="clock"></span>
+                <span class="status-pill"><?= htmlspecialchars($display_status) ?></span>
             </div>
+
+            <div class="today-timeline">
+
+                <div class="time-point">
+                    <div class="time-in-icon-cont">
+                        <img src="../assets/img/timeIn-icon.png" class="time-in-icon" alt="Time In">
+                    </div>
+
+                    <div>
+                        <p class="time-label">Time In</p>
+                        <p class="time-value"><?= htmlspecialchars($display_time_in) ?></p>
+                    </div>
+                </div>
+
+                <div class="time-line"></div>
+
+                <div class="time-point">
+                    <div class="time-out-icon-cont">
+                        <img src="../assets/img/timeOut-icon.png" class="time-out-icon" alt="Time Out">
+                    </div>
+
+                    <div>
+                        <p class="time-label">Time Out</p>
+                        <p class="time-value"><?= htmlspecialchars($display_time_out) ?></p>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="hours-row">
+
+                <div>
+                    <p class="hours-label">Working Hours</p>
+                    <p>8 hours per day</p>
+                </div>
+
+                <div>
+                    <p class="hours-label">Break Time</p>
+                    <p>12 NN - 1 PM</p>
+                </div>
+
+                <div>
+                    <p class="hours-label">Overtime</p>
+                    <p class="hours-value" id="overtime">--</p>
+                </div>
+
+            </div>
+
+            <div class="guidelines-box" id="guidelines-leave">
+                <p class="guidelines-title">Leave Request Guidelines</p>
+                <ul>
+                    <li>File your leave request in advance before your intended leave date.</li>
+                    <li>Provide accurate details and enter the correct information.</li>
+                    <li>Your request must be reviewed and approved by the manager.</li>
+                </ul>
+            </div>
+
+            <div class="guidelines-box hidden" id="guidelines-overtime">
+                <p class="guidelines-title">Overtime Request Guidelines</p>
+                <ul>
+                    <li>Overtime must be approved by the administrator.</li>
+                    <li>Submit your request at least a day in advance.</li>
+                    <li>Overtime will be compensated based on company policy.</li>
+                    <li>Ensure your overtime work is necessary and justified.</li>
+                </ul>
+            </div>
+
+            <div class="note-box" id="note-leave">
+                <p class="note-title">Note</p>
+                <p>Your leave request will be reviewed by the administrator. Please wait for the approval before considering your leave officially approved.</p>
+            </div>
+
+            <div class="note-box hidden" id="note-overtime">
+                <p class="note-title">Note</p>
+                <p>Overtime will be compensated based on company policy and subject to approval.</p>
+            </div>
+
+        </div>
         </div>
     </main>
 
     <script src="../assets/js/empdashboard.js"></script>
-    <script src="../assets//js/requestForms.js"></script>
+
+    <script src="../assets/js/requestForms.js"></script>
+    <script src="../assets/js/clock.js"></script>
 </body>
 </html>
