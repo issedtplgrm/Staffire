@@ -19,6 +19,7 @@ $leave_sql= "SELECT
     lr.end_date,
     lr.type as leave_type,
     lr.status,
+    lr.created_at,
     u.full_name,
     u.email,
     d.name as department_name

@@ -1,3 +1,4 @@
+```php
 <?php
 session_start();
 require_once __DIR__ . '/../config/db.php';
@@ -8,6 +9,38 @@ if (!isset($_SESSION['id'])) {
     header("Location: ../auth/login.php");
     exit();
 }
+
+$username = $_SESSION["username"];
+
+// Latest leave requests
+$leave_sql = "
+    SELECT lr.start_date, lr.status
+    FROM leave_requests lr
+    JOIN users u ON lr.user_id = u.id
+    WHERE u.username = ?
+    ORDER BY lr.created_at DESC
+    LIMIT 5
+";
+
+$leaveStmt = $connection->prepare($leave_sql);
+$leaveStmt->bind_param("s", $username);
+$leaveStmt->execute();
+$leaveResult = $leaveStmt->get_result();
+
+// Latest overtime requests
+$ot_sql = "
+    SELECT orq.overtime_date, orq.status
+    FROM overtime_requests orq
+    JOIN users u ON orq.user_id = u.id
+    WHERE u.username = ?
+    ORDER BY orq.created_at DESC
+    LIMIT 5
+";
+
+$otStmt = $connection->prepare($ot_sql);
+$otStmt->bind_param("s", $username);
+$otStmt->execute();
+$otResult = $otStmt->get_result();
 
 //clears any past messages :,(
 $error = $_SESSION['error'] ?? '';
@@ -30,9 +63,9 @@ $departments = $connection->query("SELECT id, name FROM departments ORDER BY nam
 // All employees, with department name
 $employees = $connection->query(
     "SELECT u.id, u.full_name, u.username, u.email, u.role, d.name AS department
-         FROM users u
-         LEFT JOIN departments d ON d.id = u.department_id
-         ORDER BY u.full_name"
+     FROM users u
+     LEFT JOIN departments d ON d.id = u.department_id
+     ORDER BY u.full_name"
 );
 
 $current_page = basename($_SERVER['PHP_SELF']);
@@ -48,196 +81,531 @@ $username = getUsername();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Employees</title>
-    <link rel="stylesheet" href="../assets/css/adminDashboard.css">
-    <link rel="stylesheet" href="../assets/css/manageEmp.css">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="../assets/css/adminDashboard.css">
+    <link rel="stylesheet" href="../assets/css/manageEmp.css">
 </head>
 
 <body>
+
     <sidebar class="sidebar">
+
         <div class="sidebar-brand">
             <span>STAFF</span>IRE
         </div>
+
         <nav>
+
             <!-- All -->
-            <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">Home</a>
+            <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">
+                Home
+            </a>
+
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">Leave Requests</a>
+                <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">
+                    Leave Requests
+                </a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="overtimeRequests.php" class="<?= $current_page === 'overtimeRequests.php' ? 'active' : '' ?>">Overtime Requests</a>
+                <a href="overtimeRequests.php" class="<?= $current_page === 'overtimeRequests.php' ? 'active' : '' ?>">
+                    Overtime Requests
+                </a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>"> Attendance Records</a>
+                <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>">
+                    Attendance Records
+                </a>
             <?php endif; ?>
 
             <!-- Admin -->
             <?php if (isRole("admin")): ?>
-                <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>">Manage Employees</a>
+                <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>">
+                    Manage Employees
+                </a>
             <?php endif; ?>
+
+            <?php if (isRole("manager")): ?>
+
+                <!-- Request Status -->
+                <div class="sidebar-section">
+
+                    <h4>My Leave Requests</h4>
+
+                    <br>
+
+                    <ul class="req-list">
+
+                        <?php while ($row = $leaveResult->fetch_assoc()): ?>
+
+                            <li class="req-item">
+
+                                <span class="req-date">
+                                    <?= htmlspecialchars($row['start_date']) ?>
+                                </span>
+
+                                <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                    <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                </span>
+
+                            </li>
+
+                        <?php endwhile; ?>
+
+                    </ul>
+
+                    <h4>My Overtime Requests</h4>
+
+                    <br>
+
+                    <ul class="req-list">
+
+                        <?php while ($row = $otResult->fetch_assoc()): ?>
+
+                            <li class="req-item">
+
+                                <span class="req-date">
+                                    <?= htmlspecialchars($row['overtime_date']) ?>
+                                </span>
+
+                                <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                    <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                </span>
+
+                            </li>
+
+                        <?php endwhile; ?>
+
+                    </ul>
+
+                </div>
+
+            <?php endif; ?>
+
         </nav>
 
     </sidebar>
 
-
-    <?php if ($error): ?>
-        <div class="alert alert-error"><?= htmlspecialchars($error) ?></div>
-    <?php endif; ?>
-    <?php if ($success): ?>
-        <div class="alert alert-success"><?= htmlspecialchars($success) ?></div>
-    <?php endif; ?>
-
-    <!-- add / edit form -->
     <main class="main-cont">
+
         <header class="top-header">
+
             <div class="header-items">
+
                 <!-- left part -->
                 <div>
-                    <h1>Welcome, <span><?php echo htmlspecialchars(ucfirst($username)) ?>!</span></h1>
+
+                    <h1>
+                        Welcome,
+                        <span>
+                            <?php echo htmlspecialchars(ucfirst($username)) ?>!
+                        </span>
+                    </h1>
+
                 </div>
-                <!-- righth part -->
+
+                <!-- right part -->
                 <div class="header-items-right">
-                    <div>
-                        <img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()">
+
+                    <div class="notifbell-wrap">
+
+                        <img
+                            src="../assets/img/notifbell-icon.png"
+                            class="notifbell-icon"
+                            alt=""
+                            onclick="showNotifs()">
+
+                        <span
+                            class="notif-badge hidden"
+                            id="notif-badge">
+                        </span>
+
                     </div>
+
                     <div class="user">
-                        <div class="pfp" onclick="showMenu()"></div>
-                        <p><?php echo htmlspecialchars(ucfirst($username)) ?></p>
+
+                        <div
+                            class="pfp"
+                            onclick="showMenu()">
+                        </div>
+
+                        <p>
+                            <?php echo htmlspecialchars(ucfirst($username)) ?>
+                        </p>
+
                     </div>
+
                 </div>
+
             </div>
+
         </header>
-        <!-- notif-->
+
+        <!-- notif -->
         <div class="notif-wrap" id="notifs">
+
             <div class="notifs">
-                <hr>
-                <div class="notif-card">
-                    <p>notifs</p>
+
+                <div class="notif-panel-header">
+
+                    <h4>
+                        Notifications
+                    </h4>
+
                 </div>
+
+                <hr>
+
+                <div
+                    class="notif-list"
+                    id="notif-list">
+                </div>
+
             </div>
+
         </div>
+
         <!-- pfp -->
         <div class="pfp-menu-wrap" id="pfp-menu">
+
             <div class="pfp-menu">
+
                 <div class="user-info">
-                    <h2><?php echo htmlspecialchars($username) ?></h2>
+
+                    <h2>
+                        <?php echo htmlspecialchars($username) ?>
+                    </h2>
+
                 </div>
+
                 <hr>
+
                 <!-- <a href="#">IN CASE OF ADDING A NEW PAGE</a> -->
+
                 <form action="../process/logout.php">
-                    <button type="submit" class="logout-btn" href="../process/logout.php">
-                        <img src="../assets/img/logout-icon.png" class="logout-icon" alt="">
-                        <span>Logout</span>
+
+                    <button
+                        type="submit"
+                        class="logout-btn"
+                        href="../process/logout.php">
+
+                        <img
+                            src="../assets/img/logout-icon.png"
+                            class="logout-icon"
+                            alt="">
+
+                        <span>
+                            Logout
+                        </span>
+
                     </button>
+
                 </form>
+
             </div>
+
         </div>
+
+        <!-- alerts -->
+        <?php if ($error): ?>
+
+            <div class="alert alert-error">
+                <?= htmlspecialchars($error) ?>
+            </div>
+
+        <?php endif; ?>
+
+        <?php if ($success): ?>
+
+            <div class="alert alert-success">
+                <?= htmlspecialchars($success) ?>
+            </div>
+
+        <?php endif; ?>
+
+        <!-- add / edit form -->
         <div class="form-card">
-            <h3 style="margin-bottom:16px;"><?= $editing ? 'Edit Employee' : 'Add New Employee' ?></h3>
-            <form method="POST" action="<?= $editing ? '../process/editEmp-process.php' : '../process/addEmp-process.php' ?>">
+
+            <h3 style="margin-bottom:16px;">
+                <?= $editing ? 'Edit Employee' : 'Add New Employee' ?>
+            </h3>
+
+            <form
+                method="POST"
+                action="<?= $editing ? '../process/editEmp-process.php' : '../process/addEmp-process.php' ?>">
+
                 <?php if ($editing): ?>
-                    <input type="hidden" name="id" value="<?= (int) $editing['id'] ?>">
+
+                    <input
+                        type="hidden"
+                        name="id"
+                        value="<?= (int) $editing['id'] ?>">
+
                 <?php endif; ?>
 
                 <div class="form-grid">
+
                     <div>
-                        <label>Full Name</label>
-                        <input type="text" name="full_name" required value="<?= htmlspecialchars($editing['full_name'] ?? '') ?>">
-                    </div>
-                    <div>
-                        <label>Username</label>
-                        <input type="text" name="username" required value="<?= htmlspecialchars($editing['username'] ?? '') ?>">
-                    </div>
-                    <div>
-                        <label>Email</label>
-                        <input type="email" name="email" required value="<?= htmlspecialchars($editing['email'] ?? '') ?>">
+
+                        <label>
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="full_name"
+                            required
+                            value="<?= htmlspecialchars($editing['full_name'] ?? '') ?>">
+
                     </div>
 
-                    <!-- if admin is not editing, show the password input filed -->
+                    <div>
+
+                        <label>
+                            Username
+                        </label>
+
+                        <input
+                            type="text"
+                            name="username"
+                            required
+                            value="<?= htmlspecialchars($editing['username'] ?? '') ?>">
+
+                    </div>
+
+                    <div>
+
+                        <label>
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            name="email"
+                            required
+                            value="<?= htmlspecialchars($editing['email'] ?? '') ?>">
+
+                    </div>
+
+                    <!-- if admin is not editing, show the password input field -->
                     <?php if (!$editing): ?>
+
                         <div>
-                            <label>Password</label>
-                            <input type="password" name="password" required>
+
+                            <label>
+                                Password
+                            </label>
+
+                            <input
+                                type="password"
+                                name="password"
+                                required>
+
                         </div>
+
                     <?php endif; ?>
 
                     <div>
-                        <label>Role</label>
+
+                        <label>
+                            Role
+                        </label>
+
                         <select name="role">
+
                             <?php foreach (['employee', 'manager', 'admin'] as $r): ?>
-                                <option value="<?= $r ?>" <?= (($editing['role'] ?? 'employee') === $r) ? 'selected' : '' ?>>
+
+                                <option
+                                    value="<?= $r ?>"
+                                    <?= (($editing['role'] ?? 'employee') === $r) ? 'selected' : '' ?>>
+
                                     <?= ucfirst($r) ?>
+
                                 </option>
+
                             <?php endforeach; ?>
+
                         </select>
+
                     </div>
 
                     <div>
-                        <label>Department</label>
+
+                        <label>
+                            Department
+                        </label>
+
                         <select name="department_id">
-                            <option value="">-- None --</option>
+
+                            <option value="">
+                                -- None --
+                            </option>
+
                             <?php
+
                             $departments->data_seek(0);
+
                             while ($d = $departments->fetch_assoc()):
+
                             ?>
-                                <option value="<?= $d['id'] ?>" <?= (($editing['department_id'] ?? null) == $d['id']) ? 'selected' : '' ?>>
+
+                                <option
+                                    value="<?= $d['id'] ?>"
+                                    <?= (($editing['department_id'] ?? null) == $d['id']) ? 'selected' : '' ?>>
+
                                     <?= htmlspecialchars($d['name']) ?>
+
                                 </option>
+
                             <?php endwhile; ?>
+
                         </select>
+
                     </div>
+
                 </div>
 
-                <button type="submit" class="submit-btn"><?= $editing ? 'Save Changes' : 'Add Employee' ?></button>
+                <button
+                    type="submit"
+                    class="submit-btn">
+
+                    <?= $editing ? 'Save Changes' : 'Add Employee' ?>
+
+                </button>
+
                 <!-- if admin is editing, show a cancel button -->
                 <?php if ($editing): ?>
-                    <a href="../pages/manageEmployees.php" class="cancel-link">Cancel</a>
+
+                    <a
+                        href="../pages/manageEmployees.php"
+                        class="cancel-link">
+
+                        Cancel
+
+                    </a>
+
                 <?php endif; ?>
+
             </form>
+
         </div>
 
         <!-- EMPLOYEE LIST -->
         <div class="emp-table-wrap">
-            <h3>All Employees</h3>
+
+            <h3>
+                All Employees
+            </h3>
+
             <table>
+
                 <thead>
+
                     <tr>
-                        <th>Full Name</th>
-                        <th>Username</th>
-                        <th>Email</th>
-                        <th>Role</th>
-                        <th>Department</th>
-                        <th>Actions</th>
+
+                        <th>
+                            Full Name
+                        </th>
+
+                        <th>
+                            Username
+                        </th>
+
+                        <th>
+                            Email
+                        </th>
+
+                        <th>
+                            Role
+                        </th>
+
+                        <th>
+                            Department
+                        </th>
+
+                        <th>
+                            Actions
+                        </th>
+
                     </tr>
+
                 </thead>
+
                 <tbody>
+
                     <?php while ($emp = $employees->fetch_assoc()): ?>
+
                         <tr>
-                            <td><?= htmlspecialchars($emp['full_name']) ?></td>
-                            <td><?= htmlspecialchars($emp['username']) ?></td>
-                            <td><?= htmlspecialchars($emp['email']) ?></td>
-                            <td><span class="role-badge"><?= htmlspecialchars(ucfirst($emp['role'])) ?></span></td>
-                            <td><?= htmlspecialchars($emp['department'] ?? 'Unassigned') ?></td>
+
                             <td>
-                                <a href="../pages/manageEmployees.php?edit=<?= $emp['id'] ?>" class="action-link">Edit</a>
-                                <a href="../process/deleteEmp-process.php?id=<?= $emp['id'] ?>" class="action-link delete"
-                                    onclick="return confirm('Delete this user? This cannot be undone.');">Delete</a>
+                                <?= htmlspecialchars($emp['full_name']) ?>
                             </td>
+
+                            <td>
+                                <?= htmlspecialchars($emp['username']) ?>
+                            </td>
+
+                            <td>
+                                <?= htmlspecialchars($emp['email']) ?>
+                            </td>
+
+                            <td>
+
+                                <span class="role-badge">
+                                    <?= htmlspecialchars(ucfirst($emp['role'])) ?>
+                                </span>
+
+                            </td>
+
+                            <td>
+                                <?= htmlspecialchars($emp['department'] ?? 'Unassigned') ?>
+                            </td>
+
+                            <td>
+
+                                <a
+                                    href="../pages/manageEmployees.php?edit=<?= $emp['id'] ?>"
+                                    class="action-link">
+
+                                    Edit
+
+                                </a>
+
+                                <a
+                                    href="../process/deleteEmp-process.php?id=<?= $emp['id'] ?>"
+                                    class="action-link delete"
+                                    onclick="return confirm('Delete this user? This cannot be undone.');">
+
+                                    Delete
+
+                                </a>
+
+                            </td>
+
                         </tr>
+
                     <?php endwhile; ?>
+
                 </tbody>
+
             </table>
+
         </div>
+
     </main>
+
+    <script src="../assets/js/manageEmployee.js"></script>
+
 </body>
 
 </html>
+```

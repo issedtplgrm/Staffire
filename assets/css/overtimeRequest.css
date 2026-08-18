@@ -176,3 +176,52 @@
     transform: none;
     box-shadow: none;
 }
+
+/* OT LEAVE SIDEBAR */
+
+.req-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 15px;
+}
+
+.req-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--panel-row);
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.req-date {
+    font-weight: 600;
+    color: var(--text);
+}
+
+.status-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    text-transform: capitalize;
+}
+
+.status-pending {
+    background: rgba(255, 184, 77, 0.12);
+    color: #ffbf69;
+}
+
+.status-approved {
+    background: rgba(61, 214, 140, 0.12);
+    color: #78e6a9;
+}
+
+.status-rejected {
+    background: rgba(255, 83, 83, 0.12);
+    color: #ff8585;
+}

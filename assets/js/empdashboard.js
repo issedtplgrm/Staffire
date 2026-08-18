@@ -11,5 +11,3 @@ function showNotifs(){
     pfpMenu.classList.remove("open-menu")
     notifs.classList.toggle("open-notif");
 }
-
- 

@@ -3,15 +3,48 @@ require_once __DIR__ . '/../config/db.php';
 require_once __DIR__ . '/../process/access_control.php';
 
 session_start();
-//check if a user is logged in
+
+// Check if a user is logged in
 if (!isset($_SESSION['id'])) {
     header("Location: ../auth/login.php");
     exit();
 }
 
+$username = $_SESSION["username"];
+
+// Latest leave requests
+$leave_sql = "
+    SELECT lr.start_date, lr.status
+    FROM leave_requests lr
+    JOIN users u ON lr.user_id = u.id
+    WHERE u.username = ?
+    ORDER BY lr.created_at DESC
+    LIMIT 5
+";
+
+$leaveStmt = $connection->prepare($leave_sql);
+$leaveStmt->bind_param("s", $username);
+$leaveStmt->execute();
+$leaveResult = $leaveStmt->get_result();
+
+// Latest overtime requests
+$ot_sql = "
+    SELECT orq.overtime_date, orq.status
+    FROM overtime_requests orq
+    JOIN users u ON orq.user_id = u.id
+    WHERE u.username = ?
+    ORDER BY orq.created_at DESC
+    LIMIT 5
+";
+
+$otStmt = $connection->prepare($ot_sql);
+$otStmt->bind_param("s", $username);
+$otStmt->execute();
+$otResult = $otStmt->get_result();
+
 $where = "WHERE users.role != 'admin'";
 
-//added status of leave, April 16 - changed attendance.status to 'present'
+// Attendance query
 $attendance_sql = "
     SELECT
         users.full_name,
@@ -30,10 +63,9 @@ $attendance_sql = "
         AND DATE(attendance.login_time) = CURDATE()
     LEFT JOIN departments
         ON users.department_id = departments.id
-     LEFT JOIN leave_requests
+    LEFT JOIN leave_requests
         ON leave_requests.user_id = users.id
         AND leave_requests.status = 'approved'
-        
         AND CURDATE() BETWEEN leave_requests.start_date AND leave_requests.end_date
         $where
     ORDER BY attendance.login_time DESC, users.full_name ASC
@@ -66,13 +98,13 @@ $all_count = count($attendance_rows);
 $department_sql = "SELECT * FROM departments";
 $departments = $connection->query($department_sql);
 
-//get the current page that is opened
+// Get the current page that is opened
 $current_page = basename($_SERVER['PHP_SELF']);
 
-//get name
+// Get name
 $username = getUsername();
 
-//get current user's role
+// Get current user's role
 $user_role = $_SESSION['role'];
 $user_id = $_SESSION['id'];
 ?>
@@ -83,82 +115,210 @@ $user_id = $_SESSION['id'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Leave Requests</title>
+    <title>Overtime Requests</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/adminDashboard.css">
+    <link rel="stylesheet" href="../assets/css/empDashboard.css">
     <link rel="stylesheet" href="../assets/css/overtimeRequest.css">
 </head>
 
 <body>
+
     <sidebar class="sidebar">
+
         <div class="sidebar-brand">
             <span>STAFF</span>IRE
         </div>
+
         <nav>
+
             <!-- All -->
-            <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">Home</a>
+            <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">
+                Home
+            </a>
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">Leave Requests</a>
+                <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">
+                    Leave Requests
+                </a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="overtimeRequests.php" class="<?= $current_page === 'overtimeRequests.php' ? 'active' : '' ?>">Overtime Requests</a>
+                <a href="overtimeRequests.php" class="<?= $current_page === 'overtimeRequests.php' ? 'active' : '' ?>">
+                    Overtime Requests
+                </a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->
             <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>"> Attendance Records</a>
+                <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>">
+                    Attendance Records
+                </a>
             <?php endif; ?>
 
             <!-- Admin -->
             <?php if (isRole("admin")): ?>
-                <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>">Manage Employees</a>
+                <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>">
+                    Manage Employees
+                </a>
             <?php endif; ?>
+
+            <br>
+
+            <?php if (isRole("manager")): ?>
+
+                <!-- Request Status -->
+                <div class="sidebar-section">
+
+                    <h4>My Leave Requests</h4>
+
+                    <br>
+
+                    <ul class="req-list">
+                        <?php while ($row = $leaveResult->fetch_assoc()): ?>
+
+                            <li class="req-item">
+
+                                <span class="req-date">
+                                    <?= htmlspecialchars($row['start_date']) ?>
+                                </span>
+
+                                <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                    <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                </span>
+
+                            </li>
+
+                        <?php endwhile; ?>
+                    </ul>
+
+                    <h4>My Overtime Requests</h4>
+
+                    <br>
+
+                    <ul class="req-list">
+                        <?php while ($row = $otResult->fetch_assoc()): ?>
+
+                            <li class="req-item">
+
+                                <span class="req-date">
+                                    <?= htmlspecialchars($row['overtime_date']) ?>
+                                </span>
+
+                                <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                    <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                </span>
+
+                            </li>
+
+                        <?php endwhile; ?>
+                    </ul>
+
+                </div>
+
+            <?php endif; ?>
+
         </nav>
 
     </sidebar>
 
-    <!-- replace old header with sidebar, add new header in main cont--top header--put header items  -->
     <main class="main-cont">
+
         <header class="top-header">
+
             <div class="header-items">
-                <!-- left part -->
+
+                <!-- Left part -->
                 <div>
-                    <h1>Welcome, <span><?php echo htmlspecialchars(ucfirst($username)) ?>!</span></h1>
+
+                    <h1>
+                        Welcome,
+                        <span>
+                            <?php echo htmlspecialchars(ucfirst($username)) ?>!
+                        </span>
+                    </h1>
+
                 </div>
-                <!-- righth part -->
+
+                <!-- Right part -->
                 <div class="header-items-right">
-                    <div>
-                        <img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()">
+
+                    <div class="notifbell-wrap">
+
+                        <img
+                            src="../assets/img/notifbell-icon.png"
+                            class="notifbell-icon"
+                            alt=""
+                            onclick="showNotifs">
+
+                        <span
+                            class="notif-badge hidden"
+                            id="notif-badge">
+                        </span>
+
                     </div>
+
                     <div class="user">
-                        <div class="pfp" onclick="showMenu()"></div>
-                        <p><?php echo htmlspecialchars(ucfirst($username)) ?></p>
+
+                        <div
+                            class="pfp"
+                            onclick="showMenu()">
+                        </div>
+
+                        <p>
+                            <?php echo htmlspecialchars(ucfirst($username)) ?>
+                        </p>
+
                     </div>
+
                 </div>
+
             </div>
+
         </header>
-        <!-- notif-->
+
+        <!-- Notification -->
         <div class="notif-wrap" id="notifs">
+
             <div class="notifs">
-                <hr>
-                <div class="notif-card">
-                    <p>notifs</p>
+
+                <div class="notif-panel-header">
+
+                    <h4>
+                        Notifications
+                    </h4>
+
                 </div>
+
+                <hr>
+
+                <div
+                    class="notif-list"
+                    id="notif-list">
+                </div>
+
             </div>
+
         </div>
-        <!-- pfp -->
+
+        <!-- Profile Menu -->
         <div class="pfp-menu-wrap" id="pfp-menu">
+
             <div class="pfp-menu">
+
                 <div class="user-info">
-                    <h2><?php echo htmlspecialchars($username) ?></h2>
+
+                    <h2>
+                        <?php echo htmlspecialchars($username) ?>
+                    </h2>
+
                 </div>
 
                 <hr>
@@ -166,93 +326,196 @@ $user_id = $_SESSION['id'];
                 <!-- <a href="#">IN CASE OF ADDING A NEW PAGE</a> -->
 
                 <form action="../process/logout.php">
-                    <button type="submit" class="logout-btn" href="../process/logout.php">
-                        <img src="../assets/img/logout-icon.png" class="logout-icon" alt="">
-                        <span>Logout</span>
+
+                    <button
+                        type="submit"
+                        class="logout-btn"
+                        href="../process/logout.php">
+
+                        <img
+                            src="../assets/img/logout-icon.png"
+                            class="logout-icon"
+                            alt="">
+
+                        <span>
+                            Logout
+                        </span>
+
                     </button>
+
                 </form>
+
             </div>
+
         </div>
+
+        <!-- Statistics -->
         <section class="stats">
 
-            <!-- Statistics cards -->
+            <!-- Total Employee -->
             <div class="stat-card">
+
                 <div class="icon-cont">
+
                     <div class="emp-icon-cont">
+
                         <img
                             src="../assets/img/emps-icon.png"
                             class="emp-icon"
                             alt="">
+
                     </div>
+
                 </div>
 
                 <div class="stats-info">
-                    <p class="stat-title">Total Employee</p>
-                    <p class="stat-value"><?= $all_count ?></p>
+
+                    <p class="stat-title">
+                        Total Employee
+                    </p>
+
+                    <p class="stat-value">
+                        <?= $all_count ?>
+                    </p>
+
                 </div>
+
             </div>
 
+            <!-- Present Today -->
             <div class="stat-card">
+
                 <div class="icon-cont">
+
                     <div class="present-icon-cont">
+
                         <img
                             src="../assets/img/present-icon.png"
                             class="present-icon"
                             alt="">
+
                     </div>
+
                 </div>
 
                 <div class="stats-info">
-                    <p class="stat-title">Present Today</p>
-                    <p class="stat-value"><?= $present_count ?></p>
+
+                    <p class="stat-title">
+                        Present Today
+                    </p>
+
+                    <p class="stat-value">
+                        <?= $present_count ?>
+                    </p>
+
                 </div>
+
             </div>
 
+            <!-- On Leave -->
             <div class="stat-card">
+
                 <div class="icon-cont">
+
                     <div class="onleave-icon-cont">
+
                         <img
                             src="../assets/img/onleave-icon.png"
                             class="onleave-icon"
                             alt="">
+
                     </div>
+
                 </div>
 
                 <div class="stats-info">
-                    <p class="stat-title">On Leave</p>
-                    <p class="stat-value"><?= $on_leave ?></p>
+
+                    <p class="stat-title">
+                        On Leave
+                    </p>
+
+                    <p class="stat-value">
+                        <?= $on_leave ?>
+                    </p>
+
                 </div>
+
             </div>
+
         </section>
 
         <div class="panel">
 
             <div class="ot-table-wrap">
+
                 <div class="ot-toolbar">
-                    <h3>Overtime Requests</h3>
 
-                    <input type="text" id="ot-search" class="ot-search" placeholder="Search Employee Name...">
+                    <h3>
+                        Overtime Requests
+                    </h3>
 
-                    <select id="ot-department" class="ot-select">
-                        <option value="all">All Departments</option>
+                    <input
+                        type="text"
+                        id="ot-search"
+                        class="ot-search"
+                        placeholder="Search Employee Name...">
+
+                    <select
+                        id="ot-department"
+                        class="ot-select">
+
+                        <option value="all">
+                            All Departments
+                        </option>
+
                         <?php while ($d = $departments->fetch_assoc()): ?>
-                            <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
+
+                            <option value="<?= htmlspecialchars($d['name']) ?>">
+                                <?= htmlspecialchars($d['name']) ?>
+                            </option>
+
                         <?php endwhile; ?>
+
                     </select>
 
-                    <select id="ot-status" class="ot-select">
-                        <option value="all">All Statuses</option>
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="rejected">Rejected</option>
+                    <select
+                        id="ot-status"
+                        class="ot-select">
+
+                        <option value="all">
+                            All Statuses
+                        </option>
+
+                        <option value="pending">
+                            Pending
+                        </option>
+
+                        <option value="approved">
+                            Approved
+                        </option>
+
+                        <option value="rejected">
+                            Rejected
+                        </option>
+
                     </select>
 
-                    <input type="date" id="ot-date-from" class="otr-date">
-                    <input type="date" id="ot-date-to" class="ot-date">
+                    <input
+                        type="date"
+                        id="ot-date-from"
+                        class="ot-date">
+
+                    <input
+                        type="date"
+                        id="ot-date-to"
+                        class="ot-date">
+
                 </div>
 
                 <table>
+
                     <thead>
+
                         <tr>
                             <th>Employee Name</th>
                             <th>Department</th>
@@ -267,6 +530,7 @@ $user_id = $_SESSION['id'];
                             <th>Submitted On</th>
                             <th>Action</th>
                         </tr>
+
                     </thead>
 
                     <tbody
@@ -274,10 +538,13 @@ $user_id = $_SESSION['id'];
                         data-user-role="<?= htmlspecialchars($user_role) ?>"
                         data-user-id="<?= htmlspecialchars($user_id) ?>">
                     </tbody>
+
                 </table>
+
             </div>
 
         </div>
+
     </main>
 
     <script src="../assets/js/overtimeRequest.js"></script>

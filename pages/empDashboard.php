@@ -9,6 +9,38 @@ if (!isset($_SESSION['id'])) {
     exit();
 }
 
+$username = $_SESSION["username"];
+
+// Latest leave requests
+$leaveSql = "
+    SELECT lr.start_date, lr.status
+    FROM leave_requests lr
+    JOIN users u ON lr.user_id = u.id
+    WHERE u.username = ?
+    ORDER BY lr.created_at DESC
+    LIMIT 5
+";
+
+$leaveStmt = $connection->prepare($leaveSql);
+$leaveStmt->bind_param("s", $username);
+$leaveStmt->execute();
+$leaveResult = $leaveStmt->get_result();
+
+// Latest overtime requests
+$otSql = "
+    SELECT orq.overtime_date, orq.status
+    FROM overtime_requests orq
+    JOIN users u ON orq.user_id = u.id
+    WHERE u.username = ?
+    ORDER BY orq.created_at DESC
+    LIMIT 5
+";
+
+$otStmt = $connection->prepare($otSql);
+$otStmt->bind_param("s", $username);
+$otStmt->execute();
+$otResult = $otStmt->get_result();
+
 $user_id = $_SESSION['id'];
 $current_page = basename($_SERVER['PHP_SELF']);
 $username = $_SESSION['username'] ?? 'User';
@@ -108,7 +140,6 @@ $monthly_leave = (int)$monthly['leave_count'];
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -118,9 +149,7 @@ $monthly_leave = (int)$monthly['leave_count'];
     <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/empDashboard.css">
 </head>
-
 <body>
-
     <aside class="sidebar">
         <div class="sidebar-brand">
             <span>STAFF</span>IRE
@@ -133,21 +162,52 @@ $monthly_leave = (int)$monthly['leave_count'];
                 <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>">Attendance Records</a>
             <?php endif; ?>
         </nav>
+        <br>
+        <br>
 
+        <!-- Requst Status -->
+        <div class="sidebar-section">
+            <h4>My Leave</h4>
+            <br>
+            <ul class="req-list">
+                <?php while ($row = $leaveResult->fetch_assoc()): ?>
+                    <li class="req-item">
+                        <span class="req-date"><?= htmlspecialchars($row['start_date']) ?></span>
+                        <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                            <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                        </span>
+                    </li>
+                <?php endwhile; ?>
+            </ul>
+
+            <h4>My Overtime</h4>
+            <br>
+            <ul class="req-list">
+                <?php while ($row = $otResult->fetch_assoc()): ?>
+                    <li class="req-item">
+                        <span class="req-date"><?= htmlspecialchars($row['overtime_date']) ?></span>
+                        <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                            <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                        </span>
+                    </li>
+                <?php endwhile; ?>
+            </ul>
+        </div>
     </aside>
 
     <main class="main-cont">
-
         <header class="top-header">
             <div class="header-items">
                 <!-- left part -->
                 <div>
                     <h1>Welcome, <span><?php echo htmlspecialchars(ucfirst($username)) ?>!</span></h1>
                 </div>
+
                 <!-- righth part -->
                 <div class="header-items-right">
                     <div>
-                        <img src="../assets/img/notifbell-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()">
+                         <img src="../assets/img/inbox-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()">
+                         <span class="notif-badge hidden" id="notif-badge"></span>
                     </div>
                     <div class="user">
                         <div class="pfp" onclick="showMenu()"></div>
@@ -156,15 +216,22 @@ $monthly_leave = (int)$monthly['leave_count'];
                 </div>
             </div>
         </header>
-        <!-- notif-->
+
+        <!-- notif -->
         <div class="notif-wrap" id="notifs">
             <div class="notifs">
+                <div class="notif-header">
+                    <h4>Notifications</h4>
+                </div>
                 <hr>
                 <div class="notif-card">
-                    <p>notifs</p>
+                     <div class="notif-list" id="notif-list"></div>
+                    > 
+                    <!-- POSSIBLE -->
                 </div>
             </div>
         </div>
+
         <!-- pfp -->
         <div class="pfp-menu-wrap" id="pfp-menu">
             <div class="pfp-menu">
@@ -184,7 +251,6 @@ $monthly_leave = (int)$monthly['leave_count'];
 
         <!-- Monthly attendance -->
         <section class="stats">
-
             <div class="stat-card">
                 <div class="icon-cont">
                     <div class="present-stat-icon-cont">
@@ -220,11 +286,9 @@ $monthly_leave = (int)$monthly['leave_count'];
                     <p class="stat-value"><?= $monthly_leave ?></p>
                 </div>
             </div>
-
         </section>
 
         <div class="main-grid">
-
             <!-- Request forms -->
             <div class="panel">
                 <div class="panel-header">
@@ -255,7 +319,6 @@ $monthly_leave = (int)$monthly['leave_count'];
                             <label for="start_date">Start Date</label>
                             <input type="date" name="start_date" id="start_date" required>
                         </div>
-
                         <div class="date-field">
                             <label for="end_date">End Date</label>
                             <input type="date" name="end_date" id="end_date" required>
@@ -270,12 +333,14 @@ $monthly_leave = (int)$monthly['leave_count'];
 
                     <button type="submit" class="submit-btn">Submit Leave Request</button>
                 </form>
+
                 <!-- overtime request form -->
                 <form id="overtime-form-section" class="request-form hidden" action="../process/submit-request.php" method="POST">
                     <input type="hidden" name="request_type" value="overtime">
 
                     <label for="overtime_date">Date of Overtime</label>
                     <input type="date" name="overtime_date" id="overtime_date" required>
+
                     <div class="date-row">
                         <div class="date-field">
                             <label for="overtime_start">Start Time</label>
@@ -286,25 +351,28 @@ $monthly_leave = (int)$monthly['leave_count'];
                             <input type="time" name="overtime_end" id="overtime_end" required>
                         </div>
                     </div>
+
                     <label for="total_hours">Total Hours</label>
                     <input type="text" name="total_hours" id="total_hours" placeholder="4h 00m" readonly>
-                    <label>Type of Overtime</label>
 
+                    <label>Type of Overtime</label>
                     <div class="overtime-type-row">
                         <label class="overtime-type-option">
-                            <input type="radio" name="overtime_type" value="regular" checked> Regular Overtime </label>
+                            <input type="radio" name="overtime_type" value="regular" checked> Regular Overtime
+                        </label>
                         <label class="overtime-type-option">
-                            <input type="radio" name="overtime_type" value="emergency"> Emergency Overtime </label>
+                            <input type="radio" name="overtime_type" value="emergency"> Emergency Overtime
+                        </label>
                     </div>
 
                     <label for="overtime_reason">Reason for Overtime</label>
                     <textarea name="overtime_reason" id="overtime_reason" maxlength="300" placeholder="Provide a detailed reason for your overtime request." required></textarea>
+
                     <label for="overtime_work">Work to be Accomplished (Optional)</label>
                     <textarea name="overtime_work" id="overtime_work" maxlength="300" placeholder="Describe tasks or work you will be handling during this overtime."></textarea>
 
                     <button type="submit" class="submit-btn">Submit Overtime Request</button>
                 </form>
-                
             </div>
 
             <!-- RIGHT PANEL: Attendance Today -->
@@ -316,12 +384,10 @@ $monthly_leave = (int)$monthly['leave_count'];
                     </div>
 
                     <div class="today-timeline">
-
                         <div class="time-point">
                             <div class="time-in-icon-cont">
                                 <img src="../assets/img/timeIn-icon.png" class="time-in-icon" alt="Time In">
                             </div>
-
                             <div>
                                 <p class="time-label">Time In</p>
                                 <p class="time-value"><?= htmlspecialchars($display_time_in) ?></p>
@@ -334,32 +400,26 @@ $monthly_leave = (int)$monthly['leave_count'];
                             <div class="time-out-icon-cont">
                                 <img src="../assets/img/timeOut-icon.png" class="time-out-icon" alt="Time Out">
                             </div>
-
                             <div>
                                 <p class="time-label">Time Out</p>
                                 <p class="time-value"><?= htmlspecialchars($display_time_out) ?></p>
                             </div>
                         </div>
-
                     </div>
 
                     <div class="hours-row">
-
                         <div>
                             <p class="hours-label">Working Hours</p>
                             <p>8 hours per day</p>
                         </div>
-
                         <div>
                             <p class="hours-label">Break Time</p>
                             <p>12 NN - 1 PM</p>
                         </div>
-
                         <div>
                             <p class="hours-label">Overtime</p>
                             <p class="hours-value" id="overtime">--</p>
                         </div>
-
                     </div>
                 </div>
 
@@ -392,14 +452,13 @@ $monthly_leave = (int)$monthly['leave_count'];
                     <p>Overtime will be compensated based on company policy and subject to approval.</p>
                 </div>
 
+                <div class="lr-table-wrap">
+                </div>
             </div>
-
         </div>
-
     </main>
 
     <script src="../assets/js/empdashboard.js"></script>
     <script src="../assets//js/requestForms.js"></script>
 </body>
-
 </html>
