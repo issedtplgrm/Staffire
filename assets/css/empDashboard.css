@@ -218,7 +218,7 @@ nav a.active::before {
 
   backdrop-filter: blur(12px);
  
-  padding: 1px 28px;
+  padding: 1px 30px;
 
   z-index: 200;
 }
@@ -226,6 +226,7 @@ nav a.active::before {
 .header-items {
   width: 100%;
   display: flex;
+  padding-top: 10px;
   align-items: center;
   justify-content: space-between;
   gap: 20px;
@@ -561,7 +562,6 @@ nav a.active::before {
   color: #fff;
 }
 
- 
 .hidden {
   display: none !important;
 }
@@ -580,7 +580,6 @@ nav a.active::before {
   margin-top: 8px;
   margin-bottom: 4px;
 }
-
  
 .request-form select,
 .request-form input[type="text"],
@@ -664,19 +663,20 @@ nav a.active::before {
 .submit-btn {
   margin-top: 18px;
   width: 100%;
-  background: var(--grad);
-  color: #fff;
-  border: none;
+  background: none;
+  border: 1px solid #fff;
+  color: var(--text);
   border-radius: 10px;
   padding: 12px;
   font-size: 14px;
   font-weight: 700;
   cursor: pointer;
-  transition: opacity 0.3s ease;
+  transition: all 0.5s ease;
 }
  
 .submit-btn:hover {
-  opacity: 0.9;
+  background: var(--grad);
+  border: none;
 }
  
 .submit-btn:disabled {

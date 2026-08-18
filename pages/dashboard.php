@@ -125,7 +125,7 @@ $username = getUsername();
         <div class="header-items">
             <!-- left part -->
             <div> 
-                <h1>Welcome, <span><?php echo htmlspecialchars($username) ?>!</span></h1>
+                <h1>Welcome, <span><?php echo htmlspecialchars(ucfirst($username)) ?>!</span></h1>
             </div>
             <!-- righth part -->
             <div class="header-items-right">
@@ -137,7 +137,7 @@ $username = getUsername();
                 </div>
                 <div class="user">
                     <div class="pfp" onclick="showMenu()"></div>
-                    <p><?php echo htmlspecialchars($username) ?></p>
+                    <p><?php echo htmlspecialchars(ucfirst($username)) ?></p>
                 </div>
             </div>    
         </div>
