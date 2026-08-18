@@ -45,8 +45,8 @@ async function loadOvertimeRequests() {
             return `
                 <tr>
                     <td>
-                        <div class="lr-emp-cell">
-                            <div class="lr-avatar"></div>
+                        <div class="ot-emp-cell">
+                            <div class="ot-avatar"></div>
                             ${ot.full_name}
                         </div>
                     </td>
@@ -60,7 +60,7 @@ async function loadOvertimeRequests() {
                     <td>${ot.work ?? "-"}</td>
                     <td><span class="status-badge status-${ot.status}">${ot.status}</span></td>
                     <td>${submittedOn}</td>
-                    <td><div class="lr-actions">${actionButtons}</div></td>
+                    <td><div class="ot-actions">${actionButtons}</div></td>
                 </tr>
             `;
         });

@@ -97,9 +97,9 @@ $username = getUsername();
                 <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">Leave Requests</a>
             <?php endif; ?>
 
-            <!-- Employee and Manager(?) -->
-            <?php if (isRole("manager") || isRole("employee")): ?>
-                <a href="request-leave.php" class="<?= $current_page === 'requestLeave.php' ? 'active' : '' ?>">Request Leave</a>
+            <!-- Admin and Manager -->
+            <?php if (isRole("admin") || isRole("manager")): ?>
+                <a href="overtimeRequests.php" class="<?= $current_page === 'overtimeRequests.php' ? 'active' : '' ?>">Overtime Requests</a>
             <?php endif; ?>
 
             <!-- Admin and Manager -->

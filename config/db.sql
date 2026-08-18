@@ -90,8 +90,9 @@ CREATE TABLE IF NOT EXISTS monthlyAttendance(
     user_id INT NOT NULL,
     attendance_month DATE NOT NULL, 
     last_counted_date DATE NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE;
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
 
 CREATE TABLE IF NOT EXISTS overtime_requests (
     id INT PRIMARY KEY AUTO_INCREMENT,

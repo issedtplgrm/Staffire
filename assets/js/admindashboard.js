@@ -25,7 +25,7 @@ async function loadLeaveRequests() {
                     </div>
                     <div class="leave-meta">
                         <span class="leave-time">${dateRange}</span>
-                        <button class="view-btn" data-id="${leave.leave_request_id}">View</button>
+                        <a href="leaveRequests.php" class="view-btn">View</a>
                     </div>
                 </div>
             `;
@@ -36,6 +36,48 @@ async function loadLeaveRequests() {
     console.error("Failed to load leave requests:", error);
     document.getElementById("leave-list").innerHTML =
       "<p style='color:#ff8686; font-size:13px;'>Could not load leave requests.</p>";
+  }
+}
+
+async function loadOvertimeRequests() {
+  try {
+    const response = await fetch("../api/overtime_requests.php");
+    const overtimeRequests = await response.json();
+
+    const listContainer = document.getElementById("ot-list");
+    const counter = document.getElementById("ot-count");
+
+    counter.textContent = overtimeRequests.length;
+
+    if (overtimeRequests.length === 0) {
+      listContainer.innerHTML =
+        '<p style="color:#9498b8; font-size:13px;">No pending overtime requests.</p>';
+      return;
+    }
+
+    const itemsHtml = overtimeRequests.map(function (ot) {
+      const otDate = formatDateRange(ot.overtime_date, ot.overtime_date);
+      const timeRange = `${formatTime(`${ot.overtime_date} ${ot.start_time}`)} - ${formatTime(`${ot.overtime_date} ${ot.end_time}`)}`;
+
+      return `
+                <div class="leave-item">
+                    <div class="leave-info">
+                        <p class="leave-name">${ot.full_name}</p>
+                        <p class="leave-dept">${ot.department_name ?? "Unassigned"} • ${capitalize(ot.overtime_type)}</p>
+                    </div>
+                    <div class="leave-meta">
+                        <span class="leave-time">${otDate} • ${timeRange}</span>
+                        <a href="overtimeRequests.php" class="view-btn">View</a>
+                    </div>
+                </div>
+            `;
+    });
+
+    listContainer.innerHTML = itemsHtml.join("");
+  } catch (error) {
+    console.error("Failed to load overtime requests:", error);
+    document.getElementById("ot-list").innerHTML =
+      "<p style='color:#ff8686; font-size:13px;'>Could not load overtime requests.</p>";
   }
 }
 
@@ -117,9 +159,38 @@ function setupFilterButtons() {
     });
 }
 
+// switches between the leave-list and ot-list inside the shared dashboard panel
+function setupPanelTabs() {
+    const tabButtons = document.querySelectorAll(".panel-tab");
+    const seeMoreLink = document.getElementById("panel-see-more");
+
+    const seeMoreHrefs = {
+        leave: "leaveRequests.php",
+        overtime: "overtimeRequests.php",
+    };
+
+    tabButtons.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            tabButtons.forEach(function (btn) {
+                btn.classList.remove("active");
+            });
+            tab.classList.add("active");
+
+            const selected = tab.dataset.tab;
+
+            document.getElementById("leave-list").classList.toggle("active", selected === "leave");
+            document.getElementById("ot-list").classList.toggle("active", selected === "overtime");
+
+            seeMoreLink.href = seeMoreHrefs[selected];
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     loadLeaveRequests();
+    loadOvertimeRequests();
     setupFilterButtons();
+    setupPanelTabs();
     loadAttendance('all'); // Load all attendance records by default
 });
 
@@ -138,55 +209,14 @@ function showNotifs(){
 }
 
 //manager request
+// leave/overtime request modal — tab switching and overtime hour
+// calculation are handled by requestForms.js, shared with empDashboard.php
+const request = document.getElementById("request");
 
+function showRequest() { request.classList.add("show"); }
+function hideRequest() { request.classList.remove("show"); }
 
-const request=document.getElementById("request");
-const leaveTab=document.getElementById("tab-leave");
-const overtimeTab=document.getElementById("tab-overtime");
-const leaveForm=document.getElementById("leave-form-section");
-const overtimeForm=document.getElementById("overtime-form-section");
-const overtimeStart=document.getElementById("overtime_start");
-const overtimeEnd=document.getElementById("overtime_end");
-const totalHours=document.getElementById("total_hours");
-
-function showRequest(){request.classList.add("show")}
-function hideRequest(){request.classList.remove("show")}
-
-leaveTab.onclick=()=>{
-    leaveTab.classList.add("active");
-    overtimeTab.classList.remove("active");
-    leaveForm.classList.remove("hidden");
-    overtimeForm.classList.add("hidden");
-};
-
-overtimeTab.onclick=()=>{
-    overtimeTab.classList.add("active");
-    leaveTab.classList.remove("active");
-    overtimeForm.classList.remove("hidden");
-    leaveForm.classList.add("hidden");
-};
-
-function calculateOvertime(){
-    if(!overtimeStart.value||!overtimeEnd.value){
-        totalHours.value="--:--";
-        return;
-    }
-
-    const start=new Date(`1970-01-01T${overtimeStart.value}`);
-    const end=new Date(`1970-01-01T${overtimeEnd.value}`);
-
-    if(end<=start){
-        totalHours.value="--:--";
-        return;
-    }
-
-    const minutes=(end-start)/60000;
-    totalHours.value=`${String(Math.floor(minutes/60)).padStart(2,"0")}h ${String(minutes%60).padStart(2,"0")}m`;
-}
-
-overtimeStart.onchange=calculateOvertime;
-overtimeEnd.onchange=calculateOvertime;
-
-request.onclick=e=>{
-    if(e.target===request) hideRequest();
+// close modal when clicking the backdrop (outside the modal card)
+request.onclick = e => {
+    if (e.target === request) hideRequest();
 };

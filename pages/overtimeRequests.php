@@ -90,7 +90,7 @@ $user_id = $_SESSION['id'];
     <link href="https://fonts.googleapis.com/css2?family=Alata&family=Geist+Pixel&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/adminDashboard.css">
-    <link rel="stylesheet" href="../assets/css/leaveRequests.css">
+    <link rel="stylesheet" href="../assets/css/overtimeRequest.css">
 </head>
 
 <body>
@@ -226,57 +226,60 @@ $user_id = $_SESSION['id'];
         </section>
 
         <div class="panel">
-            <div class="lr-toolbar">
-                <h3>Leave Requests</h3>
 
+            <div class="ot-table-wrap">
+                <div class="ot-toolbar">
+                    <h3>Overtime Requests</h3>
 
-                <input type="text" id="lr-search" class="lr-search" placeholder="Search Employee Name...">
+                    <input type="text" id="ot-search" class="ot-search" placeholder="Search Employee Name...">
 
+                    <select id="ot-department" class="ot-select">
+                        <option value="all">All Departments</option>
+                        <?php while ($d = $departments->fetch_assoc()): ?>
+                            <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
+                        <?php endwhile; ?>
+                    </select>
 
-                <select id="lr-department" class="lr-select">
-                    <option value="all">All Departments</option>
-                    <?php while ($d = $departments->fetch_assoc()): ?>
-                        <option value="<?= htmlspecialchars($d['name']) ?>"><?= htmlspecialchars($d['name']) ?></option>
-                    <?php endwhile; ?>
-                </select>
+                    <select id="ot-status" class="ot-select">
+                        <option value="all">All Statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="approved">Approved</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
 
-                <select id="lr-status" class="lr-select">
-                    <option value="all">All Statuses</option>
-                    <option value="pending">Pending</option>
-                    <option value="approved">Approved</option>
-                    <option value="rejected">Rejected</option>
-                </select>
+                    <input type="date" id="ot-date-from" class="otr-date">
+                    <input type="date" id="ot-date-to" class="ot-date">
+                </div>
 
-                <input type="date" id="lr-date-from" class="lr-date">
-                <input type="date" id="lr-date-to" class="lr-date">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>Department</th>
+                            <th>Overtime Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Total Hours</th>
+                            <th>Type</th>
+                            <th>Reason</th>
+                            <th>Work</th>
+                            <th>Status</th>
+                            <th>Submitted On</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody
+                        id="ot-table-body"
+                        data-user-role="<?= htmlspecialchars($user_role) ?>"
+                        data-user-id="<?= htmlspecialchars($user_id) ?>">
+                    </tbody>
+                </table>
             </div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>Employee Name</th>
-                        <th>Department</th>
-                        <th>Start Date</th>
-                        <th>End Date</th>
-                        <th>Duration</th>
-                        <th>Reason</th>
-                        <th>Status</th>
-                        <th>Requested On</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody
-                    id="lr-table-body"
-                    data-user-role="<?= htmlspecialchars($user_role) ?>"
-                    data-user-id="<?= htmlspecialchars($user_id) ?>">
-                </tbody>
-            </table>
         </div>
-
     </main>
 
-    <script src="../assets/js/leaveRequests.js"></script>
     <script src="../assets/js/overtimeRequest.js"></script>
 
 </body>

@@ -3,7 +3,6 @@
         return;
     }
 
-
 function checkOvertimePrompt() {
     const now = new Date();
     const hour = now.getHours();

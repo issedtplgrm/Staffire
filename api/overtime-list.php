@@ -1,5 +1,6 @@
 <?php
-require_once "../config/db.php"; // adjust path
+
+require_once __DIR__ . '/../config/db.php';
 
 $search = $_GET['search'] ?? '';
 $department = $_GET['department'] ?? 'all';
