@@ -94,10 +94,10 @@ $username = getUsername();
     <sidebar class="sidebar">
         <div class="sidebar-brand">
             <div>
-                <img src="../assets/img/staffire-icon.png" class="staffire-icon" alt="staffire-icon">
+                <img src="../assets/img/staffire-logo.png" class="staffire-icon" alt="staffire-icon">
             </div>
             <div>
-                <span>STAFF</span>IRE  
+                <a href="dashboard.php"><span>STAFF</span>IRE</a> 
             </div>
         </div>
         <nav>

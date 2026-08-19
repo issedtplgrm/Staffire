@@ -109,6 +109,11 @@ body {
   color: #ff187c;
 }
 
+.sidebar-brand a{
+  color: #f7f2f6;
+  text-decoration: none;
+}
+
 nav {
   display: flex;
   flex-direction: column;
@@ -462,6 +467,72 @@ nav a.active::before {
   background: var(--border);
 }
 
+/* OT?LEAVE SIDEBAR */
+.sidebar-section{
+   width: 100%;
+}
+
+.sidebar hr{
+  border: 0;
+  height: 1px;
+  width: 100%;
+  background: #aaa1ad;
+  margin: 70px 0 10px;
+}
+
+.sidebar h4{
+  margin-left: 10px;
+  color: #d9d9d9;
+}
+
+.req-list {
+  list-style: none;
+  padding: 0;
+  margin: 15px 0 15px;
+}
+
+.req-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--panel-row);   /* same as table row */
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin: 10px 0;
+  font-size: 13px;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.req-date {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+  text-transform: capitalize;
+}
+
+.status-pending {
+  background: rgba(255, 184, 77, 0.12);
+  color: #ffbf69;
+}
+
+.status-approved {
+  background: rgba(61, 214, 140, 0.12);
+  color: #78e6a9;
+}
+
+.status-rejected {
+  background: rgba(255, 83, 83, 0.12);
+  color: #ff8585;
+}
+
+
 /* hanngang dito copy */
 .stats {
   display: grid;
@@ -543,6 +614,9 @@ nav a.active::before {
 .panel-tabs {
     position: relative;
     display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
     gap: 8px;
     overflow: hidden;
 }
@@ -551,7 +625,7 @@ nav a.active::before {
     background: none;
     border: none;
     font-family: inherit;
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: #9498b8;
     cursor: pointer;

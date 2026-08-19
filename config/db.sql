@@ -116,4 +116,3 @@ ALTER TABLE leave_requests
 
 ALTER TABLE overtime_requests 
     ADD COLUMN submitted_by_role ENUM('employee','manager','admin') NOT NULL DEFAULT 'employee';
-

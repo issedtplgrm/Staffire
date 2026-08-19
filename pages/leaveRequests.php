@@ -134,10 +134,10 @@ $user_id = $_SESSION['id'];
     <sidebar class="sidebar">
         <div class="sidebar-brand">
             <div>
-                <img src="../assets/img/staffire-icon.png" class="staffire-icon" alt="staffire-icon">
+                <img src="../assets/img/staffire-logo.png" class="staffire-icon" alt="staffire-icon">
             </div>
             <div>
-                <span>STAFF</span>IRE  
+                <a href="dashboard.php"><span>STAFF</span>IRE</a>
             </div>
         </div>
         <nav>
@@ -183,83 +183,36 @@ $user_id = $_SESSION['id'];
                         </svg>Manage Employees</a>
                 <?php endif; ?>
 
-                <br>
+                <hr>
 
                 <!-- Employee and Manager Request Status -->
-                <?php if (isRole("employee") || isRole("manager")): ?>
-
+                <?php if (isRole("manager")): ?>
+                    <!-- Requst Status -->
                     <div class="sidebar-section">
-
                         <h4>My Leave Requests</h4>
-
-                        <br>
-
                         <ul class="req-list">
-
-                            <?php if ($leaveResult->num_rows > 0): ?>
-
-                                <?php while ($row = $leaveResult->fetch_assoc()): ?>
-
-                                    <li class="req-item">
-
-                                        <span class="req-date">
-                                            <?= htmlspecialchars($row['start_date']) ?>
-                                        </span>
-
-                                        <span class="status-badge status-<?= strtolower(htmlspecialchars($row['status'])) ?>">
-                                            <?= htmlspecialchars(ucfirst($row['status'])) ?>
-                                        </span>
-
-                                    </li>
-
-                                <?php endwhile; ?>
-
-                            <?php else: ?>
-
+                            <?php while ($row = $leaveResult->fetch_assoc()): ?>
                                 <li class="req-item">
-                                    <span class="req-date">No requests</span>
+                                    <span class="req-date"><?= htmlspecialchars($row['start_date']) ?></span>
+                                    <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                        <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                    </span>
                                 </li>
-
-                            <?php endif; ?>
-
+                            <?php endwhile; ?>
                         </ul>
 
                         <h4>My Overtime Requests</h4>
-
-                        <br>
-
                         <ul class="req-list">
-
-                            <?php if ($otResult->num_rows > 0): ?>
-
-                                <?php while ($row = $otResult->fetch_assoc()): ?>
-
-                                    <li class="req-item">
-
-                                        <span class="req-date">
-                                            <?= htmlspecialchars($row['overtime_date']) ?>
-                                        </span>
-
-                                        <span class="status-badge status-<?= strtolower(htmlspecialchars($row['status'])) ?>">
-                                            <?= htmlspecialchars(ucfirst($row['status'])) ?>
-                                        </span>
-
-                                    </li>
-
-                                <?php endwhile; ?>
-
-                            <?php else: ?>
-
+                            <?php while ($row = $otResult->fetch_assoc()): ?>
                                 <li class="req-item">
-                                    <span class="req-date">No requests</span>
+                                    <span class="req-date"><?= htmlspecialchars($row['overtime_date']) ?></span>
+                                    <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                        <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                    </span>
                                 </li>
-
-                            <?php endif; ?>
-
+                            <?php endwhile; ?>
                         </ul>
-
                     </div>
-
                 <?php endif; ?>
 
                 </nav>

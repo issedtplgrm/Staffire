@@ -132,10 +132,10 @@ $user_id = $_SESSION['id'];
     <sidebar class="sidebar">
         <div class="sidebar-brand">
             <div>
-                <img src="../assets/img/staffire-icon.png" class="staffire-icon" alt="staffire-icon">
+                <img src="../assets/img/staffire-logo.png" class="staffire-icon" alt="staffire-icon">
             </div>
             <div>
-                <span>STAFF</span>IRE  
+                <a href="dashboard.php"><span>STAFF</span>IRE</a>  
             </div>
         </div>
         <nav>
@@ -180,8 +180,7 @@ $user_id = $_SESSION['id'];
                         </svg>Manage Employees</a>
                 <?php endif; ?>
 
-            <br>
-
+            <hr>
             <?php if (isRole("manager")): ?>
 
                 <!-- Request Status -->
@@ -189,7 +188,6 @@ $user_id = $_SESSION['id'];
 
                     <h4>My Leave Requests</h4>
 
-                    <br>
 
                     <ul class="req-list">
                         <?php while ($row = $leaveResult->fetch_assoc()): ?>
@@ -210,8 +208,6 @@ $user_id = $_SESSION['id'];
                     </ul>
 
                     <h4>My Overtime Requests</h4>
-
-                    <br>
 
                     <ul class="req-list">
                         <?php while ($row = $otResult->fetch_assoc()): ?>
