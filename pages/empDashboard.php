@@ -155,12 +155,10 @@ $monthly_leave = (int)$monthly['leave_count'];
             <span>STAFF</span>IRE
         </div>
         <nav>
-            <a href="empDashboard.php" class="<?= $current_page === 'empDashboard.php' ? 'active' : '' ?>">Home</a>
-
-            <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">Leave Requests</a>
-                <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>">Attendance Records</a>
-            <?php endif; ?>
+             <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg"
+                    fill="#e3dada" viewBox="0 0 24 24">
+                    <path d="M3 13h1v7c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-7h1c.4 0 .77-.24.92-.62.15-.37.07-.8-.22-1.09l-8.99-9a.996.996 0 0 0-1.41 0l-9.01 9c-.29.29-.37.72-.22 1.09s.52.62.92.62Zm9-8.59 6 6V20H6v-9.59z"></path>
+                </svg>Dashboard</a>
         </nav>
         <br>
         <br>
@@ -205,10 +203,6 @@ $monthly_leave = (int)$monthly['leave_count'];
 
                 <!-- righth part -->
                 <div class="header-items-right">
-                    <div>
-                         <img src="../assets/img/inbox-icon.png" class="notifbell-icon" alt="" onclick="showNotifs()">
-                         <span class="notif-badge hidden" id="notif-badge"></span>
-                    </div>
                     <div class="user">
                         <div class="pfp" onclick="showMenu()"></div>
                         <p><?php echo htmlspecialchars(ucfirst($username)) ?></p>
@@ -217,26 +211,11 @@ $monthly_leave = (int)$monthly['leave_count'];
             </div>
         </header>
 
-        <!-- notif -->
-        <div class="notif-wrap" id="notifs">
-            <div class="notifs">
-                <div class="notif-header">
-                    <h4>Notifications</h4>
-                </div>
-                <hr>
-                <div class="notif-card">
-                     <div class="notif-list" id="notif-list"></div>
-                    
-                    <!-- POSSIBLE -->
-                </div>
-            </div>
-        </div>
-
         <!-- pfp -->
         <div class="pfp-menu-wrap" id="pfp-menu">
             <div class="pfp-menu">
                 <div class="user-info">
-                    <h2><?php echo htmlspecialchars($username) ?></h2>
+                    <h2><?php echo htmlspecialchars(ucfirst($username)) ?></h2>
                 </div>
                 <hr>
                 <!-- <a href="#">IN CASE OF ADDING A NEW PAGE</a> -->
@@ -463,10 +442,9 @@ $monthly_leave = (int)$monthly['leave_count'];
         </div>
         </div>
     </main>
-
     <script src="../assets/js/empdashboard.js"></script>
-
     <script src="../assets/js/requestForms.js"></script>
     <script src="../assets/js/clock.js"></script>
 </body>
+
 </html>

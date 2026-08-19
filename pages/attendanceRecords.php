@@ -118,113 +118,123 @@ $user_id = $_SESSION['id'];
         rel="stylesheet">
 
     <link rel="stylesheet" href="../assets/css/adminDashboard.css">
-    <link rel="stylesheet" href="../assets/css/empDashboard.css">
+    <!-- <link rel="stylesheet" href="../assets/css/empDashboard.css"> -->
     <link rel="stylesheet" href="../assets/css/attendanceRecords.css">
 </head>
 
 <body>
 
     <sidebar class="sidebar">
-
         <div class="sidebar-brand">
-            <span>STAFF</span>IRE
-        </div>
-
+            <div>
+                <img src="../assets/img/staffire-icon.png" class="staffire-icon" alt="staffire-icon">
+            </div>
+            <div>
+                <span>STAFF</span>IRE  
+            </div>
+        </div>       
         <nav>
-
             <!-- All -->
-            <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>">
-                Home
-            </a>
+                <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg"
+                    fill="#e3dada" viewBox="0 0 24 24">
+                    <path d="M3 13h1v7c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-7h1c.4 0 .77-.24.92-.62.15-.37.07-.8-.22-1.09l-8.99-9a.996.996 0 0 0-1.41 0l-9.01 9c-.29.29-.37.72-.22 1.09s.52.62.92.62Zm9-8.59 6 6V20H6v-9.59z"></path>
+                </svg>Dashboard</a>
 
-            <!-- Admin and Manager -->
-            <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>">
-                    Leave Requests
-                </a>
-            <?php endif; ?>
+                <!-- Admin and Manager -->
+                <?php if (isRole("admin") || isRole("manager")): ?>
+                    <a href="../pages/leaveRequests.php" class="<?= $current_page === 'leaveRequests.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"
+                            fill="#e3dada" viewBox="0 0 24 24">
+                            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2M5 19V5h14v14z"></path>
+                            <path d="M8.5 10.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 1 0 0-3m2.5.5h6v2h-6zM7 7h10v2H7zm0 8h10v2H7z"></path>
+                        </svg>Leave Requests</a>
+                <?php endif; ?>
 
-            <!-- Admin and Manager -->
-            <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="overtimeRequests.php" class="<?= $current_page === 'overtimeRequests.php' ? 'active' : '' ?>">
-                    Overtime Requests
-                </a>
-            <?php endif; ?>
+                <!-- Admin and Manager -->
+                <?php if (isRole("admin") || isRole("manager")): ?>
+                    <a href="overtimeRequests.php" class="<?= $current_page === 'overtimeRequests.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"
+                            fill="#e3dada" viewBox="0 0 24 24">
+                            <path d="M12 2C6.58 2 2 6.58 2 12s4.58 10 10 10 10-4.58 10-10S17.42 2 12 2m0 18c-4.34 0-8-3.66-8-8s3.66-8 8-8 8 3.66 8 8-3.66 8-8 8"></path>
+                            <path d="M13 7h-2v6h6v-2h-4z"></path>
+                        </svg>Overtime Requests</a>
+                <?php endif; ?>
 
-            <!-- Admin and Manager -->
-            <?php if (isRole("admin") || isRole("manager")): ?>
-                <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>">
-                    Attendance Records
-                </a>
-            <?php endif; ?>
+                <!-- Admin and Manager -->
+                <?php if (isRole("admin") || isRole("manager")): ?>
+                    <a href="attendanceRecords.php" class="<?= $current_page === 'attendanceRecords.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"
+                            fill="#e3dada" viewBox="0 0 24 24">
+                            <path d="M19 3h-2c0-.55-.45-1-1-1H8c-.55 0-1 .45-1 1H5c-1.1 0-2 .9-2 2v15c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2m0 17H5V5h2v2h10V5h2z"></path>
+                            <path d="M11 14.09 8.71 11.8 7.3 13.21l3 3c.2.2.45.29.71.29s.51-.1.71-.29l5-5-1.41-1.41-4.29 4.29Z"></path>
+                        </svg> Attendance Records</a>
+                <?php endif; ?>
 
-            <!-- Admin -->
-            <?php if (isRole("admin")): ?>
-                <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>">
-                    Manage Employees
-                </a>
-            <?php endif; ?>
+                <!-- Admin -->
+                <?php if (isRole("admin")): ?>
+                    <a href="manageEmployees.php" class="<?= $current_page === 'manageEmployees.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg" width="256" height="256"
+                            fill="#e3dada" viewBox="0 0 24 24">
+                            <path d="M12 11c1.71 0 3-1.29 3-3s-1.29-3-3-3-3 1.29-3 3 1.29 3 3 3m0-4c.6 0 1 .4 1 1s-.4 1-1 1-1-.4-1-1 .4-1 1-1m1 5h-2c-2.76 0-5 2.24-5 5v.5c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5V17c0-2.76-2.24-5-5-5m-5 5c0-1.65 1.35-3 3-3h2c1.65 0 3 1.35 3 3zm-1.5-6c.47 0 .9-.12 1.27-.33a5.03 5.03 0 0 1-.42-4.52C7.09 6.06 6.8 6 6.5 6 5.06 6 4 7.06 4 8.5S5.06 11 6.5 11m-.39 1H5.5C3.57 12 2 13.57 2 15.5v1c0 .28.22.5.5.5H4c0-1.96.81-3.73 2.11-5m11.39-1c1.44 0 2.5-1.06 2.5-2.5S18.94 6 17.5 6c-.31 0-.59.06-.85.15a5.03 5.03 0 0 1-.42 4.52c.37.21.79.33 1.27.33m1 1h-.61A6.97 6.97 0 0 1 20 17h1.5c.28 0 .5-.22.5-.5v-1c0-1.93-1.57-3.5-3.5-3.5"></path>
+                        </svg>Manage Employees</a>
+                <?php endif; ?> 
 
-            <br>
+                <br>
 
-            <?php if (isRole("manager")): ?>
+                <?php if (isRole("manager")): ?>
 
-                <!-- Request Status -->
-                <div class="sidebar-section">
+                    <!-- Request Status -->
+                    <div class="sidebar-section">
 
-                    <h4>My Leave Requests</h4>
+                        <h4>My Leave Requests</h4>
 
-                    <br>
+                        <br>
 
-                    <ul class="req-list">
+                        <ul class="req-list">
 
-                        <?php while ($row = $leaveResult->fetch_assoc()): ?>
+                            <?php while ($row = $leaveResult->fetch_assoc()): ?>
 
-                            <li class="req-item">
+                                <li class="req-item">
 
-                                <span class="req-date">
-                                    <?= htmlspecialchars($row['start_date']) ?>
-                                </span>
+                                    <span class="req-date">
+                                        <?= htmlspecialchars($row['start_date']) ?>
+                                    </span>
 
-                                <span class="status-badge status-<?= strtolower($row['status']) ?>">
-                                    <?= htmlspecialchars(ucfirst($row['status'])) ?>
-                                </span>
+                                    <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                        <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                    </span>
 
-                            </li>
+                                </li>
 
-                        <?php endwhile; ?>
+                            <?php endwhile; ?>
 
-                    </ul>
+                        </ul>
 
-                    <h4>My Overtime Requests</h4>
+                        <h4>My Overtime Requests</h4>
 
-                    <br>
+                        <br>
 
-                    <ul class="req-list">
+                        <ul class="req-list">
 
-                        <?php while ($row = $otResult->fetch_assoc()): ?>
+                            <?php while ($row = $otResult->fetch_assoc()): ?>
 
-                            <li class="req-item">
+                                <li class="req-item">
 
-                                <span class="req-date">
-                                    <?= htmlspecialchars($row['overtime_date']) ?>
-                                </span>
+                                    <span class="req-date">
+                                        <?= htmlspecialchars($row['overtime_date']) ?>
+                                    </span>
 
-                                <span class="status-badge status-<?= strtolower($row['status']) ?>">
-                                    <?= htmlspecialchars(ucfirst($row['status'])) ?>
-                                </span>
+                                    <span class="status-badge status-<?= strtolower($row['status']) ?>">
+                                        <?= htmlspecialchars(ucfirst($row['status'])) ?>
+                                    </span>
 
-                            </li>
+                                </li>
 
-                        <?php endwhile; ?>
+                            <?php endwhile; ?>
 
-                    </ul>
+                        </ul>
 
-                </div>
+                    </div>
 
-            <?php endif; ?>
+                <?php endif; ?>
 
-        </nav>
+                </nav>
 
     </sidebar>
 
