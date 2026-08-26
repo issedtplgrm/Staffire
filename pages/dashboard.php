@@ -2,6 +2,9 @@
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
+// OOP: create the Database object and retrieve its MySQLi connection.
+$database = new Database();
+$connection = $database->getConnection();
 require_once __DIR__ . '/../process/access_control.php';
 
 $username = $_SESSION["username"];

@@ -3,6 +3,9 @@ session_start();
 
 header("Content-Type: application/json");
 require_once __DIR__ . '/../config/db.php';
+// OOP: create the Database object and retrieve its MySQLi connection.
+$database = new Database();
+$connection = $database->getConnection();
 
 // check if a user is logged in
 if (!isset($_SESSION['id'])) {

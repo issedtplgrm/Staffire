@@ -1,6 +1,9 @@
 <?php
 session_start();
 require_once __DIR__ . '/../config/db.php';
+// OOP: create the Database object and retrieve its MySQLi connection.
+$database = new Database();
+$connection = $database->getConnection();
 require_once __DIR__ . '/../process/access_control.php';
 date_default_timezone_set('Asia/Manila');
 
@@ -158,11 +161,11 @@ $monthly_leave = (int)$monthly['leave_count'];
                 <img src="../assets/img/staffire-logo.png" class="staffire-icon" alt="staffire-icon">
             </div>
             <div>
-                <a href="dashboard.php"><span>STAFF</span>IRE</a>  
+                <a href="../pages/empDashboard.php"><span>STAFF</span>IRE</a>  
             </div>
         </div>
         <nav>
-            <a href="dashboard.php" class="<?= $current_page === 'dashboard.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg"
+            <a href="../pages/empDashboard.php" class="<?= $current_page === '../pages/empDashboard.php' ? 'active' : '' ?>"><svg xmlns="http://www.w3.org/2000/svg"
                     fill="#e3dada" viewBox="0 0 24 24">
                     <path d="M3 13h1v7c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2v-7h1c.4 0 .77-.24.92-.62.15-.37.07-.8-.22-1.09l-8.99-9a.996.996 0 0 0-1.41 0l-9.01 9c-.29.29-.37.72-.22 1.09s.52.62.92.62Zm9-8.59 6 6V20H6v-9.59z"></path>
                 </svg>Dashboard</a>
@@ -451,6 +454,7 @@ $monthly_leave = (int)$monthly['leave_count'];
     <script src="../assets/js/empdashboard.js"></script>
     <script src="../assets/js/requestForms.js"></script>
     <script src="../assets/js/clock.js"></script>
+    <script src="../assets/js/overTime.js"></script>
 </body>
 
 </html>

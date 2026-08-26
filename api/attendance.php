@@ -4,6 +4,9 @@ session_start();
 
 header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/db.php';
+// OOP: create the Database object and retrieve its MySQLi connection.
+$database = new Database();
+$connection = $database->getConnection();
 
 if (!isset($_SESSION['id'])) {
     http_response_code(401); // Unauthorized
@@ -15,7 +18,7 @@ $filter = $_GET['filter'] ?? 'all';
 $where = "WHERE users.role != 'admin'";
 
 if ($filter === 'present') {
-    $where .= "AND attendance.status != 'absent' AND leave_requests.status IS NULL";
+    $where .= " AND attendance.status != 'absent' AND leave_requests.status IS NULL";
 } elseif ($filter === 'absent') {
     $where .= " AND attendance.status  IS NULL";
 }
