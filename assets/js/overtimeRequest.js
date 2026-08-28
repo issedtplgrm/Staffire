@@ -160,57 +160,130 @@ function attachActionButtonListeners() {
         });
 }
 
+let pendingOvertimeAction = null;
+let pendingOvertimeId = null;
+
+
 async function handleAction(id, action) {
-    
-    const actionText = action === "approve" ? "approve" : "reject";
 
-    const confirmed = confirm(
-        `Are you sure you want to ${actionText} this overtime request?`
-    );
+    pendingOvertimeId = id;
+    pendingOvertimeAction = action;
 
-    
-    if (!confirmed) {
+    const modal = document.getElementById("confirmation-modal");
+    const title = document.getElementById("confirmation-title");
+    const message = document.getElementById("confirmation-message");
+    const confirmButton = document.getElementById("confirm-action-btn");
+
+    if (action === "approve") {
+
+        title.textContent = "Approve Overtime Request";
+
+        message.textContent =
+            "Are you sure you want to approve this overtime request?";
+
+        confirmButton.textContent = "Approve";
+
+        confirmButton.classList.remove("reject");
+
+    } else if (action === "reject") {
+
+        title.textContent = "Reject Overtime Request";
+
+        message.textContent =
+            "Are you sure you want to reject this overtime request?";
+
+        confirmButton.textContent = "Reject";
+
+        confirmButton.classList.add("reject");
+    }
+
+    modal.classList.add("show");
+}
+
+
+async function confirmOvertimeAction() {
+
+    if (!pendingOvertimeId || !pendingOvertimeAction) {
         return;
     }
+
+    const id = pendingOvertimeId;
+    const action = pendingOvertimeAction;
+
+    closeConfirmationModal();
+
     try {
+
         const response = await fetch("../api/overtime-action.php", {
             method: "POST",
+
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: new URLSearchParams({ id: id, action: action })
+
+            body: new URLSearchParams({
+                id: id,
+                action: action
+            })
         });
 
         const result = await response.json();
 
         if (result.success) {
-
-            if (action === "approve") {
-                showConfirmation("Approved this request.");
-            } else if (action === "reject") {
-                showConfirmation("Rejected this request.");
-            }
             loadOvertimeRequests();
+
+        } else {
+
+            alert(result.message || "Failed to update overtime request.");
+
         }
+
     } catch (error) {
+
         console.error("Failed to update overtime request:", error);
+
         alert("Could not reach the server. Please try again.");
+
+    } finally {
+
+        pendingOvertimeId = null;
+        pendingOvertimeAction = null;
     }
 }
 
-function showConfirmation(message) {
-    const container = document.getElementById("confirmation-container");
 
-    container.innerHTML = `
-        <div class="confirmation-message">
-            ${message}
-        </div>
-    `;
+function closeConfirmationModal() {
 
-    setTimeout(function () {
-        container.innerHTML = "";
-    }, 3000);
+    const modal = document.getElementById("confirmation-modal");
+
+    modal.classList.remove("show");
+
+    pendingOvertimeId = null;
+    pendingOvertimeAction = null;
 }
+
+document.getElementById("confirm-action-btn").addEventListener("click", function () {
+    confirmOvertimeAction();
+});
+
+
+document.getElementById("cancel-confirm-btn").addEventListener("click", function () {
+    closeConfirmationModal();
+});
+
+
+document.getElementById("confirmation-close").addEventListener("click", function () {
+    closeConfirmationModal();
+});
+
+
+document.getElementById("confirmation-modal").addEventListener("click", function (event) {
+
+    if (event.target === this) {
+        closeConfirmationModal();
+    }
+
+});
 
 function setupFilterListeners() {
     document.getElementById("ot-search").addEventListener("input", loadOvertimeRequests);

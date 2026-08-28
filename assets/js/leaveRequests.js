@@ -164,58 +164,185 @@ function attachActionButtonListeners() {
         });
 }
 
-async function handleAction(id, action) {
-    const actionText = action === "approve" ? "approve" : "reject";
 
-    const confirmed = confirm(
-        `Are you sure you want to ${actionText} this leave request?`
-    );
+// async function handleAction(id, action) {
+//     const actionText = action === "approve" ? "approve" : "reject";
 
-    if (!confirmed) {
+//     const confirmed = confirm(
+//         `Are you sure you want to ${actionText} this leave request?`
+//     );
+
+//     if (!confirmed) {
+//         return;
+//     }
+//     try {
+//         const response = await fetch("../api/leaveAction.php", {
+//             method: "POST",
+//             headers: {
+//                 "Content-Type": "application/x-www-form-urlencoded"
+//             },
+//             body: new URLSearchParams({ id: id, action: action })
+            
+//         });
+
+//         const result = await response.json();
+
+//         if (result.success) {
+
+//             if (action === "approve") {
+//                 showConfirmation("Approved this request.");
+//             } else if (action === "reject") {
+//                 showConfirmation("Rejected this request.");
+//             }
+
+//             loadLeaveRequests();
+//         }
+
+//     } catch (error) {
+//         console.error("Failed to update leave request:", error);
+//         alert("Could not reach the server. Please try again.");
+//     }
+// }
+
+// function showConfirmation(message) {
+//     const container = document.getElementById("confirmation-container");
+
+//     container.innerHTML = `
+//         <div class="confirmation-message">
+//             ${message}
+//         </div>
+//     `;
+
+//     setTimeout(function () {
+//         container.innerHTML = "";
+//     }, 3000);
+// }
+
+let pendingLeaveAction = null;
+let pendingLeaveId = null;
+
+
+function handleAction(id, action) {
+
+    pendingLeaveId = id;
+    pendingLeaveAction = action;
+
+    const modal = document.getElementById("confirmation-modal");
+    const title = document.getElementById("confirmation-title");
+    const message = document.getElementById("confirmation-message");
+    const confirmButton = document.getElementById("confirm-action-btn");
+
+    if (action === "approve") {
+
+        title.textContent = "Approve Leave Request";
+
+        message.textContent =
+            "Are you sure you want to approve this leave request?";
+
+        confirmButton.textContent = "Approve";
+
+        confirmButton.classList.remove("reject");
+
+    } else if (action === "reject") {
+
+        title.textContent = "Reject Leave Request";
+
+        message.textContent =
+            "Are you sure you want to reject this leave request?";
+
+        confirmButton.textContent = "Reject";
+
+        confirmButton.classList.add("reject");
+    }
+
+    modal.classList.add("show");
+}
+
+async function confirmLeaveAction() {
+
+    if (!pendingLeaveId || !pendingLeaveAction) {
         return;
     }
+
+    const id = pendingLeaveId;
+    const action = pendingLeaveAction;
+
+    closeConfirmationModal();
+
     try {
+
         const response = await fetch("../api/leaveAction.php", {
             method: "POST",
+
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
             },
-            body: new URLSearchParams({ id: id, action: action })
-            
+
+            body: new URLSearchParams({
+                id: id,
+                action: action
+            })
         });
 
         const result = await response.json();
 
         if (result.success) {
 
-            if (action === "approve") {
-                showConfirmation("Approved this request.");
-            } else if (action === "reject") {
-                showConfirmation("Rejected this request.");
-            }
-
             loadLeaveRequests();
+
+        } else {
+
+            alert(result.message || "Failed to update leave request.");
+
         }
 
     } catch (error) {
+
         console.error("Failed to update leave request:", error);
+
         alert("Could not reach the server. Please try again.");
+
+    } finally {
+
+        pendingLeaveId = null;
+        pendingLeaveAction = null;
     }
 }
 
-function showConfirmation(message) {
-    const container = document.getElementById("confirmation-container");
 
-    container.innerHTML = `
-        <div class="confirmation-message">
-            ${message}
-        </div>
-    `;
+function closeConfirmationModal() {
 
-    setTimeout(function () {
-        container.innerHTML = "";
-    }, 3000);
+    const modal = document.getElementById("confirmation-modal");
+
+    modal.classList.remove("show");
+
+    pendingLeaveId = null;
+    pendingLeaveAction = null;
 }
+
+
+document.getElementById("confirm-action-btn").addEventListener("click", function () {
+    confirmLeaveAction();
+});
+
+
+document.getElementById("cancel-confirm-btn").addEventListener("click", function () {
+    closeConfirmationModal();
+});
+
+
+document.getElementById("confirmation-close").addEventListener("click", function () {
+    closeConfirmationModal();
+});
+
+
+document.getElementById("confirmation-modal").addEventListener("click", function (event) {
+
+    if (event.target === this) {
+        closeConfirmationModal();
+    }
+
+});
 
 function setupFilterListeners() {
     // "input" fires on every keystroke

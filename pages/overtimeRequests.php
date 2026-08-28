@@ -554,6 +554,48 @@ $user_id = $_SESSION['id'];
 
         </div>
 
+        <!-- confirmation modal -->
+        <div id="confirmation-modal" class="confirmation-modal">
+
+            <div class="confirmation-modal-content">
+
+                <button
+                    type="button"
+                    class="confirmation-close"
+                    id="confirmation-close">
+                    &times;
+                </button>
+
+                <h2 id="confirmation-title">
+                    Confirm Action
+                </h2>
+
+                <p id="confirmation-message">
+                    Are you sure you want to continue?
+                </p>
+
+                <div class="confirmation-actions">
+
+                    <button
+                        type="button"
+                        class="cancel-confirm-btn"
+                        id="cancel-confirm-btn">
+                        Cancel
+                    </button>
+
+                    <button
+                        type="button"
+                        class="confirm-action-btn"
+                        id="confirm-action-btn">
+                        Confirm
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+                    
     </main>
 
     <script src="../assets/js/overtimeRequest.js"></script>
