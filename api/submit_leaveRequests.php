@@ -1,58 +1,46 @@
 <?php
 session_start();
-
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../classes/LeaveRequest.php';
 
-if (!isset($_SESSION['user_id'])) {
-    header("Location: ../auth/login.php");
-    exit;
+if (!isset($_SESSION['id'])) {
+    header('Location: ../auth/login.php');
+    exit();
 }
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header("Location: ../pages/empDashboard.php");
-    exit;
+    header('Location: ../pages/empDashboard.php');
+    exit();
 }
 
-$user_id     = $_SESSION['user_id'];
-$leave_type  = $_POST['leave_type'] ?? '';
-$start_date  = $_POST['start_date'] ?? '';
-$end_date    = $_POST['end_date'] ?? '';
-$reason      = trim($_POST['reason'] ?? '');
+$userId = (int) $_SESSION['id'];
+$role = $_SESSION['role'] ?? 'employee';
+$type = $_POST['leave_type'] ?? '';
+$start = $_POST['start_date'] ?? '';
+$end = $_POST['end_date'] ?? '';
+$reason = trim($_POST['reason'] ?? '');
+$allowed = ['vacation', 'sick', 'emergency', 'other', 'others'];
 
-// ----- Basic validation -----
-$allowed_types = ['vacation', 'sick', 'emergency', 'others'];
+try {
+    if (!in_array($type, $allowed, true) || !$start || !$end || $reason === '') {
+        throw new InvalidArgumentException('Please fill out all required fields.');
+    }
+    if (strtotime($end) < strtotime($start)) {
+        throw new InvalidArgumentException('End date cannot be before the start date.');
+    }
+    if (strtotime($start) < strtotime(date('Y-m-d'))) {
+        throw new InvalidArgumentException('Start date cannot be in the past.');
+    }
 
-if (!in_array($leave_type, $allowed_types, true) || !$start_date || !$end_date || $reason === '') {
-    $_SESSION['flash'] = ['type' => 'error', 'message' => 'Please fill out all required fields.'];
-    header("Location: ../pages/empDashboard.php");
-    exit;
+    $db = new Database();
+    $leave = new LeaveRequest($db->getConnection());
+    $leave->setUserId($userId)->setType($type)->setStartDate($start)->setEndDate($end)->setReason($reason)->setSubmittedByRole($role);
+    $_SESSION['flash'] = $leave->create()
+        ? ['type' => 'success', 'message' => 'Leave request submitted successfully.']
+        : ['type' => 'error', 'message' => 'Something went wrong while submitting your request.'];
+} catch (Throwable $e) {
+    $_SESSION['flash'] = ['type' => 'error', 'message' => $e->getMessage()];
 }
 
-if (strtotime($end_date) < strtotime($start_date)) {
-    $_SESSION['flash'] = ['type' => 'error', 'message' => 'End date cannot be before the start date.'];
-    header("Location: ../pages/empDashboard.php");
-    exit;
-}
-
-if (strtotime($start_date) < strtotime(date('Y-m-d'))) {
-    $_SESSION['flash'] = ['type' => 'error', 'message' => 'Start date cannot be in the past.'];
-    header("Location: ../pages/empDashboard.php");
-    exit;
-}
-
-// ----- Insert the leave request -----
-$stmt = $connection->prepare("
-    INSERT INTO leave_requests (user_id, leave_type, start_date, end_date, reason, status, created_at)
-    VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())
-");
-$stmt->bind_param("isssss", $user_id, $leave_type, $start_date, $end_date, $reason);
-
-if ($stmt->execute()) {
-    $_SESSION['flash'] = ['type' => 'success', 'message' => 'Leave request submitted successfully.'];
-} else {
-    $_SESSION['flash'] = ['type' => 'error', 'message' => 'Something went wrong while submitting your request. Please try again.'];
-}
-
-$stmt->close();
-header("Location: ../pages/empDashboard.php");
-exit;
+header('Location: ../pages/empDashboard.php');
+exit();

@@ -1,6 +1,13 @@
 <?php
 session_start();
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../classes/User.php';
+require_once __DIR__ . '/../classes/Department.php';
+
+$database = new Database();
+$connection = $database->getConnection();
+$userRepository = new User($connection);
+$departmentRepository = new Department($connection);
 require_once __DIR__ . '/../process/access_control.php';
 
 //check if a user is logged in
@@ -50,22 +57,14 @@ unset($_SESSION['error'], $_SESSION['success']);
 $editing = null;
 if (isset($_GET['edit'])) {
     $id = (int) $_GET['edit'];
-    $stmt = $connection->prepare("SELECT * FROM users WHERE id = ?");
-    $stmt->bind_param("i", $id);
-    $stmt->execute();
-    $editing = $stmt->get_result()->fetch_assoc();
+    $editing = $userRepository->find($id);
 }
 
 // departments for the dropdown
-$departments = $connection->query("SELECT id, name FROM departments ORDER BY name");
+$departments = $departmentRepository->all();
 
 // All employees, with department name
-$employees = $connection->query(
-    "SELECT u.id, u.full_name, u.username, u.email, u.role, d.name AS department
-     FROM users u
-     LEFT JOIN departments d ON d.id = u.department_id
-     ORDER BY u.full_name"
-);
+$employees = $userRepository->allWithDepartment();
 
 $current_page = basename($_SERVER['PHP_SELF']);
 
@@ -94,10 +93,10 @@ $username = getUsername();
     <sidebar class="sidebar">
         <div class="sidebar-brand">
             <div>
-                <img src="../assets/img/staffire-icon.png" class="staffire-icon" alt="staffire-icon">
+                <img src="../assets/img/staffire-logo.png" class="staffire-icon" alt="staffire-icon">
             </div>
             <div>
-                <span>STAFF</span>IRE  
+                <a href="dashboard.php"><span>STAFF</span>IRE</a> 
             </div>
         </div>
         <nav>

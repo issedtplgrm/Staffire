@@ -1,57 +1,28 @@
 <?php
-
+header('Content-Type: application/json; charset=utf-8');
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../classes/OvertimeRequest.php';
 
-$search = $_GET['search'] ?? '';
-$department = $_GET['department'] ?? 'all';
-$status = $_GET['status'] ?? 'all';
-$date_from = $_GET['date_from'] ?? '';
-$date_to = $_GET['date_to'] ?? '';
+$conditions = [];
+$params = [];
+$types = '';
+$search = trim($_GET['search'] ?? '');
+$department = trim($_GET['department'] ?? 'all');
+$status = trim($_GET['status'] ?? 'all');
+$dateFrom = trim($_GET['date_from'] ?? '');
+$dateTo = trim($_GET['date_to'] ?? '');
 
-$overtime_sql = "
-    SELECT
-        ot.id AS overtime_request_id,
-        ot.user_id,
-        ot.overtime_date,
-        ot.start_time,
-        ot.end_time,
-        ot.total_hours,
-        ot.overtime_type,
-        ot.reason,
-        ot.work,
-        ot.status,
-        ot.created_at,
-        ot.submitted_by_role,
-        u.full_name,
-        u.email,
-        d.name AS department_name
-    FROM overtime_requests ot
-    JOIN users u ON ot.user_id = u.id
-    LEFT JOIN departments d ON u.department_id = d.id
-    WHERE 1=1
-";
+if ($search !== '') { $conditions[] = 'u.full_name LIKE CONCAT("%", ?, "%")'; $params[] = $search; $types .= 's'; }
+if ($department !== 'all' && $department !== '') { $conditions[] = 'd.name = ?'; $params[] = $department; $types .= 's'; }
+if ($status !== 'all' && $status !== '') { $conditions[] = 'ot.status = ?'; $params[] = $status; $types .= 's'; }
+if ($dateFrom !== '') { $conditions[] = 'ot.overtime_date >= ?'; $params[] = $dateFrom; $types .= 's'; }
+if ($dateTo !== '') { $conditions[] = 'ot.overtime_date <= ?'; $params[] = $dateTo; $types .= 's'; }
 
-if ($search !== '') {
-    $overtime_sql .= " AND u.full_name LIKE '%" . $connection->real_escape_string($search) . "%'";
+try {
+    $db = new Database();
+    $overtime = new OvertimeRequest($db->getConnection());
+    echo json_encode($overtime->all($conditions, $params, $types));
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['error' => $e->getMessage()]);
 }
-if ($department !== 'all') {
-    $overtime_sql .= " AND d.name = '" . $connection->real_escape_string($department) . "'";
-}
-if ($status !== 'all') {
-    $overtime_sql .= " AND ot.status = '" . $connection->real_escape_string($status) . "'";
-}
-if ($date_from !== '') {
-    $overtime_sql .= " AND ot.overtime_date >= '" . $connection->real_escape_string($date_from) . "'";
-}
-if ($date_to !== '') {
-    $overtime_sql .= " AND ot.overtime_date <= '" . $connection->real_escape_string($date_to) . "'";
-}
-
-$result = $connection->query($overtime_sql);
-$rows = [];
-while ($row = $result->fetch_assoc()) {
-    $rows[] = $row;
-}
-
-header("Content-Type: application/json");
-echo json_encode($rows);
