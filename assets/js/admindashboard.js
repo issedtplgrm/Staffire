@@ -284,8 +284,8 @@ function showNotifs(){
 }
 
 //manager request
-// leave/overtime request modal — tab switching and overtime hour
-// calculation are handled by requestForms.js, shared with empDashboard.php
+// leave/overtime request modal
+// calculation are handled by requestForms.js, shared with empDashboard
 const request = document.getElementById("request");
 
 function showRequest() { request.classList.add("show"); }

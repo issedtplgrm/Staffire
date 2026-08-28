@@ -135,6 +135,8 @@ async function loadLeaveRequests() {
                     <td><div class="lr-actions">${actionButtons}</div></td>
                 </tr>
             `;
+
+
         });
 
         tableBody.innerHTML = rowsHtml.join("");
@@ -163,6 +165,15 @@ function attachActionButtonListeners() {
 }
 
 async function handleAction(id, action) {
+    const actionText = action === "approve" ? "approve" : "reject";
+
+    const confirmed = confirm(
+        `Are you sure you want to ${actionText} this leave request?`
+    );
+
+    if (!confirmed) {
+        return;
+    }
     try {
         const response = await fetch("../api/leaveAction.php", {
             method: "POST",
@@ -176,16 +187,34 @@ async function handleAction(id, action) {
         const result = await response.json();
 
         if (result.success) {
-            // Reload the table so the row shows its new status
+
+            if (action === "approve") {
+                showConfirmation("Approved this request.");
+            } else if (action === "reject") {
+                showConfirmation("Rejected this request.");
+            }
+
             loadLeaveRequests();
-        } else {
-            alert(result.error || "Something went wrong.");
         }
 
     } catch (error) {
         console.error("Failed to update leave request:", error);
         alert("Could not reach the server. Please try again.");
     }
+}
+
+function showConfirmation(message) {
+    const container = document.getElementById("confirmation-container");
+
+    container.innerHTML = `
+        <div class="confirmation-message">
+            ${message}
+        </div>
+    `;
+
+    setTimeout(function () {
+        container.innerHTML = "";
+    }, 3000);
 }
 
 function setupFilterListeners() {

@@ -177,4 +177,33 @@
     box-shadow: none;
 }
 
-/* sidebar leave/ot*/
+#confirmation-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.confirmation-message {
+    background: #25202b;
+    color: #fff;
+    padding: 14px 20px;
+    border-radius: 8px;
+    border: 1px solid #ff2b87;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    font-size: 14px;
+    animation: confirmationSlideIn 0.25s ease;
+}
+
+@keyframes confirmationSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+

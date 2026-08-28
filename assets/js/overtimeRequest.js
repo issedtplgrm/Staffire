@@ -161,6 +161,17 @@ function attachActionButtonListeners() {
 }
 
 async function handleAction(id, action) {
+    
+    const actionText = action === "approve" ? "approve" : "reject";
+
+    const confirmed = confirm(
+        `Are you sure you want to ${actionText} this overtime request?`
+    );
+
+    
+    if (!confirmed) {
+        return;
+    }
     try {
         const response = await fetch("../api/overtime-action.php", {
             method: "POST",
@@ -173,15 +184,32 @@ async function handleAction(id, action) {
         const result = await response.json();
 
         if (result.success) {
-            loadOvertimeRequests();
-        } else {
-            alert(result.error || "Something went wrong.");
-        }
 
+            if (action === "approve") {
+                showConfirmation("Approved this request.");
+            } else if (action === "reject") {
+                showConfirmation("Rejected this request.");
+            }
+            loadOvertimeRequests();
+        }
     } catch (error) {
         console.error("Failed to update overtime request:", error);
         alert("Could not reach the server. Please try again.");
     }
+}
+
+function showConfirmation(message) {
+    const container = document.getElementById("confirmation-container");
+
+    container.innerHTML = `
+        <div class="confirmation-message">
+            ${message}
+        </div>
+    `;
+
+    setTimeout(function () {
+        container.innerHTML = "";
+    }, 3000);
 }
 
 function setupFilterListeners() {

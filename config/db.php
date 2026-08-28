@@ -4,7 +4,7 @@ class Database
 {
     private string $host = 'localhost';
     private string $user = 'root';
-    private string $password = '123';
+    private string $password = '!bootsNcats1';
     private string $dbname = 'Staffire';
     private mysqli $connection;
 
