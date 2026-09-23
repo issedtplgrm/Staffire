@@ -2,102 +2,245 @@
 
 class Attendance
 {
-    private mysqli $connection;
-    private ?int $id = null;
-    private ?int $userId = null;
-    private string $loginTime = '';
-    private ?string $logoutTime = null;
-    private string $status = 'present';
+    private $connection;
+    private $id = null;
+    private $userId = null;
+    private $loginTime = '';
+    private $logoutTime = null;
+    private $status = 'present';
 
-    public function __construct(mysqli $connection)
+    public function __construct($connection)
     {
         $this->connection = $connection;
     }
 
-    public function setId(int $id): self { $this->id = $id; return $this; }
-    public function setUserId(int $userId): self { $this->userId = $userId; return $this; }
-    public function setLoginTime(string $loginTime): self { $this->loginTime = $loginTime; return $this; }
-    public function setLogoutTime(?string $logoutTime): self { $this->logoutTime = $logoutTime; return $this; }
-    public function setStatus(string $status): self { $this->status = $status; return $this; }
-    public function getId(): ?int { return $this->id; }
-
-    public function activeToday(int $userId): ?array
+    public function setId($id)
     {
-        $stmt = $this->connection->prepare('SELECT id, login_time, status FROM attendance WHERE user_id = ? AND DATE(login_time) = CURDATE() AND logout_time IS NULL LIMIT 1');
-        $stmt->bind_param('i', $userId);
+        $this->id = $id;
+        return $this;
+    }
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+        return $this;
+    }
+    public function setLoginTime($loginTime)
+    {
+        $this->loginTime = $loginTime;
+        return $this;
+    }
+    public function setLogoutTime($logoutTime)
+    {
+        $this->logoutTime = $logoutTime;
+        return $this;
+    }
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function activeToday($userId)
+    {
+        $query = "SELECT id, login_time, status
+                  FROM attendance
+                  WHERE user_id = ?
+                  AND DATE(login_time) = CURDATE()
+                  AND logout_time IS NULL
+                  LIMIT 1";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in activeToday(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $userId);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc() ?: null;
+
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
-    public function timeoutOthers(int $userId): bool
+    public function timeoutOthers($userId)
     {
-        $stmt = $this->connection->prepare('UPDATE attendance SET logout_time = NOW() WHERE DATE(login_time) = CURDATE() AND logout_time IS NULL AND user_id != ?');
-        $stmt->bind_param('i', $userId);
+        $query = "UPDATE attendance
+                  SET logout_time = NOW()
+                  WHERE DATE(login_time) = CURDATE()
+                  AND logout_time IS NULL
+                  AND user_id != ?";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in timeoutOthers(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $userId);
         return $stmt->execute();
     }
 
-    public function deleteToday(int $userId): bool
+    public function deleteToday($userId)
     {
-        $stmt = $this->connection->prepare('DELETE FROM attendance WHERE user_id = ? AND DATE(login_time) = CURDATE()');
-        $stmt->bind_param('i', $userId);
+        $query = "DELETE FROM attendance
+                  WHERE user_id = ?
+                  AND DATE(login_time) = CURDATE()";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in deleteToday(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $userId);
         return $stmt->execute();
     }
 
-    public function create(): bool
+    public function create()
     {
-        if ($this->userId === null || $this->loginTime === '') return false;
-        $stmt = $this->connection->prepare('INSERT INTO attendance (user_id, login_time, logout_time, status) VALUES (?, ?, NULL, ?)');
-        $stmt->bind_param('iss', $this->userId, $this->loginTime, $this->status);
+        if ($this->userId == null || $this->loginTime == '') {
+            return false;
+        }
+
+        $query = "INSERT INTO attendance
+                  (user_id, login_time, logout_time, status)
+                  VALUES (?, ?, NULL, ?)";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in create(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("iss", $this->userId, $this->loginTime, $this->status);
         return $stmt->execute();
     }
 
-    public function update(): bool
+    public function update()
     {
-        if ($this->id === null) return false;
-        $stmt = $this->connection->prepare('UPDATE attendance SET logout_time = ?, status = ? WHERE id = ?');
-        $stmt->bind_param('ssi', $this->logoutTime, $this->status, $this->id);
+        if ($this->id == null) {
+            return false;
+        }
+
+        $query = "UPDATE attendance
+                  SET logout_time = ?, status = ?
+                  WHERE id = ?";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in update(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("ssi", $this->logoutTime, $this->status, $this->id);
         return $stmt->execute();
     }
 
-    public function delete(): bool
+    public function delete()
     {
-        if ($this->id === null) return false;
-        $stmt = $this->connection->prepare('DELETE FROM attendance WHERE id = ?');
-        $stmt->bind_param('i', $this->id);
+        if ($this->id == null) {
+            return false;
+        }
+
+        $query = "DELETE FROM attendance WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in delete(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $this->id);
         return $stmt->execute();
     }
 
-    public function logout(): bool
+    public function logout()
     {
-        if ($this->id === null) return false;
+        if ($this->id == null) {
+            return false;
+        }
+
         $this->logoutTime = date('Y-m-d H:i:s');
         return $this->update();
     }
 
-    public function getLogoutTime(int $attendanceId): ?string
+    public function getLogoutTime($attendanceId)
     {
-        $stmt = $this->connection->prepare('SELECT logout_time FROM attendance WHERE id = ?');
-        $stmt->bind_param('i', $attendanceId);
+        $query = "SELECT logout_time FROM attendance WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in getLogoutTime(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $attendanceId);
         $stmt->execute();
-        $row = $stmt->get_result()->fetch_assoc();
+
+        $result = $stmt->get_result();
+        $row = $result->fetch_assoc();
+
         return $row['logout_time'] ?? null;
     }
 
-    public function todayForUser(int $userId): ?array
+    public function todayForUser($userId)
     {
-        $stmt = $this->connection->prepare('SELECT login_time, logout_time, status FROM attendance WHERE user_id = ? AND DATE(login_time) = CURDATE() LIMIT 1');
-        $stmt->bind_param('i', $userId);
+        $query = "SELECT login_time, logout_time, status
+                  FROM attendance
+                  WHERE user_id = ?
+                  AND DATE(login_time) = CURDATE()
+                  LIMIT 1";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in todayForUser(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $userId);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc() ?: null;
+
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
-    public function all(array $conditions = [], array $params = [], string $types = ''): array
+    public function all($conditions = [], $params = [], $types = '')
     {
-        $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
-        $sql = "SELECT a.id AS attendance_id, a.login_time, a.logout_time, a.status, u.full_name, d.name AS department_name FROM attendance a JOIN users u ON a.user_id = u.id LEFT JOIN departments d ON u.department_id = d.id $where ORDER BY a.login_time DESC";
-        $stmt = $this->connection->prepare($sql);
-        if ($params) $stmt->bind_param($types, ...$params);
+        $where = '';
+
+        if (!empty($conditions)) {
+            $where = 'WHERE ' . implode(' AND ', $conditions);
+        }
+
+        $query = "SELECT
+                    a.id AS attendance_id,
+                    a.login_time,
+                    a.logout_time,
+                    a.status,
+                    u.full_name,
+                    d.name AS department_name
+                  FROM attendance a
+                  INNER JOIN users u ON a.user_id = u.id
+                  LEFT JOIN departments d ON u.department_id = d.id
+                  $where
+                  ORDER BY a.login_time DESC";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in all(): " . $this->connection->error);
+        }
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }
