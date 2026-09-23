@@ -2,43 +2,76 @@
 
 class Department
 {
-    private mysqli $connection;
-    private ?int $id = null;
-    private string $name = '';
+    private $connection;
+    private $id = null;
+    private $name = '';
 
-    public function __construct(mysqli $connection)
+    public function __construct($connection)
     {
         $this->connection = $connection;
     }
 
-    public function setId(int $id): self { $this->id = $id; return $this; }
-    public function setName(string $name): self { $this->name = $name; return $this; }
-
-    public function create(): bool
+    public function setId($id)
     {
-        $stmt = $this->connection->prepare('INSERT INTO departments (name) VALUES (?)');
-        $stmt->bind_param('s', $this->name);
+        $this->id = $id;
+        return $this;
+    }
+    public function setName($name)
+    {
+        $this->name = $name;
+        return $this;
+    }
+
+    public function create()
+    {
+        $query = "INSERT INTO departments (name) VALUES (?)";
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in create(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("s", $this->name);
         return $stmt->execute();
     }
 
-    public function update(): bool
+    public function update()
     {
-        if ($this->id === null) return false;
-        $stmt = $this->connection->prepare('UPDATE departments SET name = ? WHERE id = ?');
-        $stmt->bind_param('si', $this->name, $this->id);
+        if ($this->id == null) {
+            return false;
+        }
+
+        $query = "UPDATE departments SET name = ? WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in update(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("si", $this->name, $this->id);
         return $stmt->execute();
     }
 
-    public function delete(): bool
+    public function delete()
     {
-        if ($this->id === null) return false;
-        $stmt = $this->connection->prepare('DELETE FROM departments WHERE id = ?');
-        $stmt->bind_param('i', $this->id);
+        if ($this->id == null) {
+            return false;
+        }
+
+        $query = "DELETE FROM departments WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in delete(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $this->id);
         return $stmt->execute();
     }
 
-    public function all(): mysqli_result
+    public function all()
     {
-        return $this->connection->query('SELECT id, name FROM departments ORDER BY name');
+        $query = "SELECT id, name FROM departments ORDER BY name";
+        return $this->connection->query($query);
     }
 }
