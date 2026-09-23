@@ -2,96 +2,282 @@
 
 class OvertimeRequest
 {
-    private mysqli $connection;
-    private ?int $id = null;
-    private ?int $userId = null;
-    private string $date = '';
-    private string $start = '';
-    private string $end = '';
-    private float $hours = 0;
-    private string $type = '';
-    private string $reason = '';
-    private ?string $work = null;
-    private string $status = 'pending';
-    private ?int $managerId = null;
-    private string $submittedByRole = 'employee';
+    private $connection;
+    private $id = null;
+    private $userId = null;
+    private $date = '';
+    private $start = '';
+    private $end = '';
+    private $hours = 0;
+    private $type = '';
+    private $reason = '';
+    private $work = null;
+    private $status = 'pending';
+    private $managerId = null;
+    private $submittedByRole = 'employee';
 
-    public function __construct(mysqli $connection)
+    public function __construct($connection)
     {
         $this->connection = $connection;
     }
 
-    public function setId(int $id): self { $this->id = $id; return $this; }
-    public function setUserId(int $userId): self { $this->userId = $userId; return $this; }
-    public function setDate(string $date): self { $this->date = $date; return $this; }
-    public function setStart(string $start): self { $this->start = $start; return $this; }
-    public function setEnd(string $end): self { $this->end = $end; return $this; }
-    public function setHours(float $hours): self { $this->hours = $hours; return $this; }
-    public function setType(string $type): self { $this->type = $type; return $this; }
-    public function setReason(string $reason): self { $this->reason = $reason; return $this; }
-    public function setWork(?string $work): self { $this->work = $work; return $this; }
-    public function setStatus(string $status): self { $this->status = $status; return $this; }
-    public function setManagerId(?int $managerId): self { $this->managerId = $managerId; return $this; }
-    public function setSubmittedByRole(string $role): self { $this->submittedByRole = $role; return $this; }
-
-    public function create(): bool
+    public function setId($id)
     {
-        if ($this->userId === null) return false;
-        $stmt = $this->connection->prepare("INSERT INTO overtime_requests (user_id, overtime_date, start_time, end_time, total_hours, overtime_type, reason, work, status, manager_id, submitted_by_role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NULL, ?)");
-        $stmt->bind_param('isssdssss', $this->userId, $this->date, $this->start, $this->end, $this->hours, $this->type, $this->reason, $this->work, $this->submittedByRole);
+        $this->id = $id;
+        return $this;
+    }
+    public function setUserId($userId)
+    {
+        $this->userId = $userId;
+        return $this;
+    }
+    public function setDate($date)
+    {
+        $this->date = $date;
+        return $this;
+    }
+    public function setStart($start)
+    {
+        $this->start = $start;
+        return $this;
+    }
+    public function setEnd($end)
+    {
+        $this->end = $end;
+        return $this;
+    }
+    public function setHours($hours)
+    {
+        $this->hours = $hours;
+        return $this;
+    }
+    public function setType($type)
+    {
+        $this->type = $type;
+        return $this;
+    }
+    public function setReason($reason)
+    {
+        $this->reason = $reason;
+        return $this;
+    }
+    public function setWork($work)
+    {
+        $this->work = $work;
+        return $this;
+    }
+    public function setStatus($status)
+    {
+        $this->status = $status;
+        return $this;
+    }
+    public function setManagerId($managerId)
+    {
+        $this->managerId = $managerId;
+        return $this;
+    }
+    public function setSubmittedByRole($role)
+    {
+        $this->submittedByRole = $role;
+        return $this;
+    }
+
+    public function create()
+    {
+        if ($this->userId == null) {
+            return false;
+        }
+
+        $query = "INSERT INTO overtime_requests
+                  (user_id, overtime_date, start_time, end_time, total_hours,
+                   overtime_type, reason, work, status, manager_id, submitted_by_role)
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'pending', NULL, ?)";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in create(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param(
+            "isssdssss",
+            $this->userId,
+            $this->date,
+            $this->start,
+            $this->end,
+            $this->hours,
+            $this->type,
+            $this->reason,
+            $this->work,
+            $this->submittedByRole
+        );
+
         return $stmt->execute();
     }
 
-    public function find(int $id): ?array
+    public function find($id)
     {
-        $stmt = $this->connection->prepare('SELECT submitted_by_role, user_id FROM overtime_requests WHERE id = ?');
-        $stmt->bind_param('i', $id);
+        $query = "SELECT submitted_by_role, user_id
+                  FROM overtime_requests
+                  WHERE id = ?";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in find(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $id);
         $stmt->execute();
-        return $stmt->get_result()->fetch_assoc() ?: null;
+
+        $result = $stmt->get_result();
+        return $result->fetch_assoc();
     }
 
-    public function update(): bool
+    public function update()
     {
-        if ($this->id === null) return false;
-        if ($this->managerId === null) {
-            $stmt = $this->connection->prepare('UPDATE overtime_requests SET status = ? WHERE id = ?');
-            $stmt->bind_param('si', $this->status, $this->id);
+        if ($this->id == null) {
+            return false;
+        }
+
+        if ($this->managerId == null) {
+            $query = "UPDATE overtime_requests
+                      SET status = ?
+                      WHERE id = ?";
+
+            $stmt = $this->connection->prepare($query);
+
+            if (!$stmt) {
+                die("SQL Error in update(): " . $this->connection->error);
+            }
+
+            $stmt->bind_param("si", $this->status, $this->id);
             return $stmt->execute();
         }
-        $stmt = $this->connection->prepare('UPDATE overtime_requests SET status = ?, manager_id = ? WHERE id = ?');
-        $stmt->bind_param('sii', $this->status, $this->managerId, $this->id);
+
+        $query = "UPDATE overtime_requests
+                  SET status = ?, manager_id = ?
+                  WHERE id = ?";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in update(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("sii", $this->status, $this->managerId, $this->id);
         return $stmt->execute();
     }
 
-    public function delete(): bool
+    public function delete()
     {
-        if ($this->id === null) return false;
-        $stmt = $this->connection->prepare('DELETE FROM overtime_requests WHERE id = ?');
-        $stmt->bind_param('i', $this->id);
+        if ($this->id == null) {
+            return false;
+        }
+
+        $query = "DELETE FROM overtime_requests WHERE id = ?";
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in delete(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $this->id);
         return $stmt->execute();
     }
 
-    public function updateStatus(int $id, string $status, ?int $managerId = null): bool
+    public function updateStatus($id, $status, $managerId = null)
     {
-        return $this->setId($id)->setStatus($status)->setManagerId($managerId)->update();
+        $this->setId($id);
+        $this->setStatus($status);
+        $this->setManagerId($managerId);
+
+        return $this->update();
     }
 
-    public function pending(int $limit = 5): array
+    public function pending($limit = 5)
     {
-        $limit = max(1, (int) $limit);
-        $stmt = $this->connection->prepare("SELECT ot.id AS overtime_request_id, ot.user_id, ot.overtime_date, ot.start_time, ot.end_time, ot.total_hours, ot.overtime_type, ot.status, ot.created_at, u.full_name, d.name AS department_name FROM overtime_requests ot JOIN users u ON ot.user_id = u.id LEFT JOIN departments d ON u.department_id = d.id WHERE ot.status = 'pending' ORDER BY ot.created_at DESC LIMIT ?");
-        $stmt->bind_param('i', $limit);
+        $limit = (int) $limit;
+
+        if ($limit < 1) {
+            $limit = 1;
+        }
+
+        $query = "SELECT
+                    ot.id AS overtime_request_id,
+                    ot.user_id,
+                    ot.overtime_date,
+                    ot.start_time,
+                    ot.end_time,
+                    ot.total_hours,
+                    ot.overtime_type,
+                    ot.status,
+                    ot.created_at,
+                    u.full_name,
+                    d.name AS department_name
+                  FROM overtime_requests ot
+                  INNER JOIN users u ON ot.user_id = u.id
+                  LEFT JOIN departments d ON u.department_id = d.id
+                  WHERE ot.status = 'pending'
+                  ORDER BY ot.created_at DESC
+                  LIMIT ?";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in pending(): " . $this->connection->error);
+        }
+
+        $stmt->bind_param("i", $limit);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 
-    public function all(array $conditions = [], array $params = [], string $types = ''): array
+    public function all($conditions = [], $params = [], $types = '')
     {
-        $where = $conditions ? 'WHERE ' . implode(' AND ', $conditions) : '';
-        $sql = "SELECT ot.id AS overtime_request_id, ot.user_id, ot.overtime_date, ot.start_time, ot.end_time, ot.total_hours, ot.overtime_type, ot.reason, ot.work, ot.status, ot.created_at, ot.submitted_by_role, u.full_name, u.email, d.name AS department_name FROM overtime_requests ot JOIN users u ON ot.user_id = u.id LEFT JOIN departments d ON u.department_id = d.id $where ORDER BY ot.created_at DESC";
-        $stmt = $this->connection->prepare($sql);
-        if ($params) $stmt->bind_param($types, ...$params);
+        $where = '';
+
+        if (!empty($conditions)) {
+            $where = 'WHERE ' . implode(' AND ', $conditions);
+        }
+
+        $query = "SELECT
+                    ot.id AS overtime_request_id,
+                    ot.user_id,
+                    ot.overtime_date,
+                    ot.start_time,
+                    ot.end_time,
+                    ot.total_hours,
+                    ot.overtime_type,
+                    ot.reason,
+                    ot.work,
+                    ot.status,
+                    ot.created_at,
+                    ot.submitted_by_role,
+                    u.full_name,
+                    u.email,
+                    d.name AS department_name
+                  FROM overtime_requests ot
+                  INNER JOIN users u ON ot.user_id = u.id
+                  LEFT JOIN departments d ON u.department_id = d.id
+                  $where
+                  ORDER BY ot.created_at DESC";
+
+        $stmt = $this->connection->prepare($query);
+
+        if (!$stmt) {
+            die("SQL Error in all(): " . $this->connection->error);
+        }
+
+        if (!empty($params)) {
+            $stmt->bind_param($types, ...$params);
+        }
+
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+
+        $result = $stmt->get_result();
+        return $result->fetch_all(MYSQLI_ASSOC);
     }
 }
