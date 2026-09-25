@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 $userId = (int) $_SESSION['id'];
 $userRole = $_SESSION['role'];
 $requestType = $_POST['request_type'] ?? '';
-$redirect = $userRole === 'manager' ? '../pages/request-leave.php' : '../pages/empDashboard.php';
+$redirect = $userRole === 'manager' ? '../pages/dashboard.php' : '../pages/dashboard.php';
 
 try {
     $db = new Database();
