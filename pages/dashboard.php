@@ -9,6 +9,11 @@ require_once __DIR__ . '/../process/access_control.php';
 
 $username = $_SESSION["username"];
 
+if($_SESSION['role'] === 'employee'){
+    header("Location: empDashboard.php");
+}
+
+
 // Latest leave requests
 $leave_sql = "
     SELECT lr.start_date, lr.status

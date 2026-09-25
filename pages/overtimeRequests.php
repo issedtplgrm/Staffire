@@ -7,6 +7,12 @@ require_once __DIR__ . '/../process/access_control.php';
 
 session_start();
 
+
+if($_SESSION['role'] === 'employee'){
+    header("Location: empDashboard.php");
+}
+
+
 // Check if a user is logged in
 if (!isset($_SESSION['id'])) {
     header("Location: ../auth/login.php");
