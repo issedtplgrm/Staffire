@@ -161,6 +161,10 @@ function attachActionButtonListeners() {
 }
 
 async function handleAction(id, action) {
+    if (action === "approve" && !(await confirmApproval())) {
+        return;
+    }
+
     try {
         const response = await fetch("../api/overtime-action.php", {
             method: "POST",
@@ -175,13 +179,55 @@ async function handleAction(id, action) {
         if (result.success) {
             loadOvertimeRequests();
         } else {
-            alert(result.error || "Something went wrong.");
+            showRequestToast(result.error || "Something went wrong.");
         }
 
     } catch (error) {
         console.error("Failed to update overtime request:", error);
-        alert("Could not reach the server. Please try again.");
+        showRequestToast("Could not reach the server. Please try again.");
     }
+}
+
+function showRequestToast(message) {
+    const toast = document.getElementById("request-toast");
+    toast.textContent = message;
+    toast.hidden = false;
+
+    clearTimeout(showRequestToast.timeout);
+    showRequestToast.timeout = setTimeout(function () {
+        toast.hidden = true;
+    }, 4500);
+}
+
+function confirmApproval() {
+    const modal = document.getElementById("confirmation-modal");
+    const confirmButton = document.getElementById("confirmation-confirm");
+
+    modal.hidden = false;
+
+    return new Promise(function (resolve) {
+        function close(confirmed) {
+            modal.hidden = true;
+            confirmButton.removeEventListener("click", confirm);
+            modal.querySelectorAll("[data-confirmation-cancel]").forEach(function (element) {
+                element.removeEventListener("click", cancel);
+            });
+            resolve(confirmed);
+        }
+
+        function confirm() {
+            close(true);
+        }
+
+        function cancel() {
+            close(false);
+        }
+
+        confirmButton.addEventListener("click", confirm);
+        modal.querySelectorAll("[data-confirmation-cancel]").forEach(function (element) {
+            element.addEventListener("click", cancel);
+        });
+    });
 }
 
 function setupFilterListeners() {

@@ -177,4 +177,104 @@
     box-shadow: none;
 }
 
+.request-toast[hidden] {
+    display: none;
+}
+
+.request-toast {
+    position: fixed;
+    top: 84px;
+    right: 24px;
+    z-index: 1100;
+    max-width: min(360px, calc(100vw - 48px));
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 134, 134, 0.25);
+    border-radius: 10px;
+    background: #4a1b1b;
+    color: #ffb3b3;
+    font-size: 13px;
+    line-height: 1.45;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+    animation: request-toast-in 0.2s ease-out;
+}
+
+@keyframes request-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.confirmation-modal[hidden] {
+    display: none;
+}
+
+.confirmation-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 20px;
+}
+
+.confirmation-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(8, 10, 24, 0.72);
+}
+
+.confirmation-dialog {
+    position: relative;
+    width: min(100%, 380px);
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--panel-row);
+    color: var(--text);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+}
+
+.confirmation-dialog h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+}
+
+.confirmation-dialog p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.confirmation-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+.confirmation-actions button {
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.confirmation-cancel {
+    background: transparent;
+    color: var(--muted);
+}
+
+.confirmation-confirm {
+    background: var(--grad);
+    color: #fff;
+}
+
 /* sidebar leave/ot*/

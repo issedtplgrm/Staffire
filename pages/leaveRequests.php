@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/../config/db.php';
-// OOP: create the Database object and retrieve its MySQLi connection.
+
 $database = new Database();
 $connection = $database->getConnection();
 require_once __DIR__ . '/../process/access_control.php';
@@ -532,6 +532,20 @@ $user_id = $_SESSION['id'];
         </div>
 
     </main>
+
+    <div class="request-toast" id="request-toast" role="alert" aria-live="polite" hidden></div>
+
+    <div class="confirmation-modal" id="confirmation-modal" hidden>
+        <div class="confirmation-backdrop" data-confirmation-cancel></div>
+        <section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmation-title">
+            <h2 id="confirmation-title">Approve leave request?</h2>
+            <p>This request will be marked as approved.</p>
+            <div class="confirmation-actions">
+                <button type="button" class="confirmation-cancel" data-confirmation-cancel>Cancel</button>
+                <button type="button" class="confirmation-confirm" id="confirmation-confirm">Approve</button>
+            </div>
+        </section>
+    </div>
 
     <script src="../assets/js/leaveRequests.js"></script>
     <script src="../assets/js/overtimeRequest.js"></script>

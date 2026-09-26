@@ -562,6 +562,20 @@ $user_id = $_SESSION['id'];
 
     </main>
 
+    <div class="request-toast" id="request-toast" role="alert" aria-live="polite" hidden></div>
+
+    <div class="confirmation-modal" id="confirmation-modal" hidden>
+        <div class="confirmation-backdrop" data-confirmation-cancel></div>
+        <section class="confirmation-dialog" role="dialog" aria-modal="true" aria-labelledby="confirmation-title">
+            <h2 id="confirmation-title">Approve overtime request?</h2>
+            <p>This request will be marked as approved.</p>
+            <div class="confirmation-actions">
+                <button type="button" class="confirmation-cancel" data-confirmation-cancel>Cancel</button>
+                <button type="button" class="confirmation-confirm" id="confirmation-confirm">Approve</button>
+            </div>
+        </section>
+    </div>
+
     <script src="../assets/js/overtimeRequest.js"></script>
 
 </body>
