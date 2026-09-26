@@ -41,10 +41,25 @@ function switchTab(target){
     //autofill end-date minmimun wehn start date is picked
     const startDateInput = document.getElementById("start_date");
     const endDateInput = document.getElementById("end_date");
+    const overtimeDateInput = document.getElementById("overtime_date");
+    const today = new Date();
+    const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, "0")}-${String(today.getDate()).padStart(2, "0")}`;
+
+    if (startDateInput) {
+      startDateInput.min = todayStr;
+    }
+
+    if (endDateInput) {
+      endDateInput.min = todayStr;
+    }
+
+    if (overtimeDateInput) {
+      overtimeDateInput.min = todayStr;
+    }
  
     if (startDateInput && endDateInput) {
         startDateInput.addEventListener("change", () => {
-        endDateInput.min = startDateInput.value;
+        endDateInput.min = startDateInput.value || todayStr;
         });
     } 
 
@@ -78,12 +93,5 @@ function switchTab(target){
         overtimeStart.addEventListener("change", calculateOvertime);
         overtimeEnd.addEventListener("change", calculateOvertime);
     }
-
-    const overtimeDateInput = document.getElementById("overtime_date");
-    if (overtimeDateInput) {
-        const todayStr = new Date().toISOString().split("T")[0];
-        overtimeDateInput.min = todayStr;
-    }
-
 
 });
