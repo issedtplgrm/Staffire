@@ -2,9 +2,17 @@
 session_start();
 
 require_once __DIR__ . '/../config/db.php';
+// OOP: create the Database object and retrieve its MySQLi connection.
+$database = new Database();
+$connection = $database->getConnection();
 require_once __DIR__ . '/../process/access_control.php';
 
 $username = $_SESSION["username"];
+
+if($_SESSION['role'] === 'employee'){
+    header("Location: empDashboard.php");
+}
+
 
 // Latest leave requests
 $leave_sql = "
@@ -92,7 +100,7 @@ while ($row = $attendance_result->fetch_assoc()) {
         $present_count++;
     }
 }
-
+//gs
 
 $all_count = count($attendance_rows);
 
@@ -125,7 +133,7 @@ $username = getUsername();
                 <img src="../assets/img/staffire-logo.png" class="staffire-icon" alt="staffire-icon">
             </div>
             <div>
-                <span>STAFF</span>IRE  
+                <a href="dashboard.php"><span>STAFF</span>IRE</a>  
             </div>
         </div>
         <nav>
@@ -170,13 +178,12 @@ $username = getUsername();
                         </svg>Manage Employees</a>
                 <?php endif; ?>
 
-                <br>
+                <hr>
 
                 <?php if (isRole("manager")): ?>
                     <!-- Requst Status -->
                     <div class="sidebar-section">
                         <h4>My Leave Requests</h4>
-                        <br>
                         <ul class="req-list">
                             <?php while ($row = $leaveResult->fetch_assoc()): ?>
                                 <li class="req-item">
@@ -189,7 +196,6 @@ $username = getUsername();
                         </ul>
 
                         <h4>My Overtime Requests</h4>
-                        <br>
                         <ul class="req-list">
                             <?php while ($row = $otResult->fetch_assoc()): ?>
                                 <li class="req-item">
@@ -313,7 +319,6 @@ $username = getUsername();
                             Overtime Requests (<span id="ot-count">0</span>)
                         </button>
                     </div>
-                    <a href="leaveRequests.php" class="see-more" id="panel-see-more">See More</a>
                 </div>
 
                 <div id="leave-list" class="panel-tab-content active"></div>

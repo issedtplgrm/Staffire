@@ -81,6 +81,11 @@ body {
 }
 
 .sidebar-brand {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 2px;
+  place-items: center;
+
   font-size: 22px;
   font-weight: 800;
   letter-spacing: 1px;
@@ -93,8 +98,18 @@ body {
   padding-bottom: 24px;
 }
 
+.sidebar img{
+ width: 100%;
+ height: auto;
+}
+
 .sidebar-brand span {
   color: #ff187c;
+}
+
+.sidebar-brand a{
+  color: #f7f2f6;
+  text-decoration: none;
 }
 
 nav {
@@ -909,6 +924,18 @@ nav a.active::before {
 
 
 /* OT?LEAVE SIDEBAR */
+
+.sidebar-section{
+   width: 100%;
+}
+
+.sidebar hr{
+  border: 0;
+  height: 1px;
+  width: 100%;
+  background: #aaa1ad;
+  margin: 70px 0 10px;
+}
 
 .req-list {
   list-style: none;

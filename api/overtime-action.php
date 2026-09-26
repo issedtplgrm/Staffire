@@ -1,54 +1,46 @@
 <?php
-require_once "../config/db.php";
-
 session_start();
-$user_role = $_SESSION['role'] ?? null;   // e.g. 'manager', 'admin', 'employee'
-$user_id   = $_SESSION['user_id'] ?? null;
+header('Content-Type: application/json; charset=utf-8');
+require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../classes/OvertimeRequest.php';
 
-$id     = $_POST['id'] ?? null;
-$action = $_POST['action'] ?? null;
+$id = (int) ($_POST['id'] ?? 0);
+$action = $_POST['action'] ?? '';
+$userRole = $_SESSION['role'] ?? null;
+$userId = (int) ($_SESSION['id'] ?? 0);
 
-if (!$id || !$action) {
-    echo json_encode(["success" => false, "error" => "Missing parameters"]);
-    exit;
+if ($id <= 0 || !$action) {
+    echo json_encode(['success' => false, 'error' => 'Missing parameters']);
+    exit();
 }
 
-// Fetch the request to check who submitted it
-$stmt = $connection->prepare("SELECT submitted_by_role, user_id FROM overtime_requests WHERE id = ?");
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result();
-$request = $result->fetch_assoc();
+try {
+    $db = new Database();
+    $overtime = new OvertimeRequest($db->getConnection());
+    $request = $overtime->find($id);
 
-if (!$request) {
-    echo json_encode(["success" => false, "error" => "Request not found"]);
-    exit;
-}
-
-// Role validation
-if ($user_role === 'manager') {
-    if ($request['submitted_by_role'] === 'manager') {
-        echo json_encode(["success" => false, "error" => "Managers cannot approve/reject manager-submitted requests."]);
-        exit;
+    if (!$request) {
+        echo json_encode(['success' => false, 'error' => 'Request not found']);
+        exit();
     }
-    if ($request['user_id'] == $user_id) {
-        echo json_encode(["success" => false, "error" => "Managers cannot approve/reject their own requests."]);
-        exit;
+
+    if ($userRole === 'manager') {
+        if ($request['submitted_by_role'] === 'manager') {
+            echo json_encode(['success' => false, 'error' => 'Managers cannot approve/reject manager-submitted requests.']);
+            exit();
+        }
+        if ((int) $request['user_id'] === $userId) {
+            echo json_encode(['success' => false, 'error' => 'Managers cannot approve/reject their own requests.']);
+            exit();
+        }
+    } elseif ($userRole === 'employee') {
+        echo json_encode(['success' => false, 'error' => 'Employees cannot approve/reject requests.']);
+        exit();
     }
-} elseif ($user_role === 'employee') {
-    echo json_encode(["success" => false, "error" => "Employees cannot approve/reject requests."]);
-    exit;
-}
 
-// Map action to status
-$status = ($action === "approve") ? "approved" : "rejected";
-
-// Update the request
-$update = $connection->prepare("UPDATE overtime_requests SET status = ? WHERE id = ?");
-$update->bind_param("si", $status, $id);
-
-if ($update->execute()) {
-    echo json_encode(["success" => true]);
-} else {
-    echo json_encode(["success" => false, "error" => $connection->error]);
+    $status = $action === 'approve' ? 'approved' : 'rejected';
+    echo json_encode(['success' => $overtime->setId($id)->setStatus($status)->update()]);
+} catch (Throwable $e) {
+    http_response_code(500);
+    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
 }
